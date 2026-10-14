@@ -9,10 +9,11 @@ function itemNav(def, answers, index, review, onGo) {
   const sections = def.sections.map((section) => {
     const items = def.items.map((item, i) => ({ item, i })).filter(({ item }) => item.section === section.id);
     if (!items.length) return null;
+    // 各區段在同一列連續排列（區段字母為行內標示），避免 A–E 各占一列
     return h(
       "div",
-      { class: "item-nav__section" },
-      h("span", { class: "item-nav__label", title: section.title.zh }, section.id === "Z" ? "結" : section.id),
+      { class: "item-nav__group", role: "group", "aria-label": `Section ${section.id}：${section.title.zh}` },
+      h("span", { class: "item-nav__label", title: section.title.zh, "aria-hidden": "true" }, section.id === "Z" ? "結" : section.id),
       items.map(({ item, i }) =>
         h(
           "button",
@@ -31,11 +32,10 @@ function itemNav(def, answers, index, review, onGo) {
   });
   const finishBtn = h(
     "div",
-    { class: "item-nav__section" },
-    h("span", { class: "item-nav__label" }, ""),
+    { class: "item-nav__group" },
     h("button", { type: "button", class: "chip", "aria-current": index === def.items.length ? "step" : false, onclick: () => onGo(def.items.length) }, "摘要與對照")
   );
-  return h("nav", { class: "item-nav", "aria-label": "題目導覽" }, sections, finishBtn);
+  return h("nav", { class: "item-nav", "aria-label": "題目導覽" }, h("div", { class: "item-nav__flow" }, sections, finishBtn));
 }
 
 export function redpenBlock(row, mockPaper, status) {

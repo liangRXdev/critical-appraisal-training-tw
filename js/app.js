@@ -514,12 +514,39 @@ function bind() {
   $("mode-learner").addEventListener("click", () => setMode("learner"));
   $("mode-instructor").addEventListener("click", () => setMode("instructor"));
 
+  bindFullscreen();
+
   $("theme-toggle").addEventListener("click", () => {
     const root = document.documentElement;
     const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
     root.dataset.theme = dark ? "light" : "dark";
     pref("theme", root.dataset.theme);
   });
+}
+
+// ---------- 全螢幕（瀏覽器不支援時不顯示按鈕，例如 iPhone Safari） ----------
+
+function bindFullscreen() {
+  const btn = $("fullscreen-toggle");
+  if (!document.fullscreenEnabled || !document.documentElement.requestFullscreen) return;
+  btn.hidden = false;
+  const sync = () => {
+    const on = Boolean(document.fullscreenElement);
+    btn.setAttribute("aria-pressed", String(on));
+    const label = on ? "結束全螢幕（Esc）" : "全螢幕顯示";
+    btn.setAttribute("aria-label", label);
+    btn.title = label;
+  };
+  btn.addEventListener("click", async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (err) {
+      $("banners").append(banner(`無法切換全螢幕：${err.message}`)); // 不覆蓋既有的保存警示
+    }
+  });
+  document.addEventListener("fullscreenchange", sync);
+  sync();
 }
 
 // ---------- 文獻／評讀分隔線（寬度為 per-viewer 偏好） ----------
