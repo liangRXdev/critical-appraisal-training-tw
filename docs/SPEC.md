@@ -113,7 +113,11 @@
 - 來源：GRADE Handbook（2013），每條規則附章節 locator
 - 證據體設計二擇一：`rct`（起始 High）或 `observational`（起始 Low）；混合設計不支援（N3）
 - 降級五因素（risk of bias、inconsistency、indirectness、imprecision、publication bias）：各因素合法值依 Handbook 逐項定義（`docs/schema.md` 列表，每項附 locator）
-- 升級三因素（large effect、dose-response、plausible confounding）：各因素合法值依 Handbook 逐項定義；**僅 `observational` 且所有降級因素皆為 0 時可用**，否則停用並顯示原因
+  - imprecision 採 GRADE 34（2022）：合法值 0／−1／−2／−3（D-G2）
+  - publication bias 最多 ↓1，合法值 0／−1（D-G1；Handbook §5.2.5 p.23）
+- 升級三因素（large effect、dose-response、plausible confounding）：各因素合法值依 Handbook 逐項定義；**前提：所有降級因素皆為 0**，否則停用並顯示原因
+  - `observational` 起始：符合前提即可使用
+  - `rct` 起始（D-G3）：預設鎖定；學員須勾選「我了解 RCT 升級極為罕見」並填寫非空理由才解鎖，同時顯示 Handbook p.24 原文提示（*theoretically possible … yet to find a compelling example*）
 - 結果夾在 Very low 與 High 之間
 - 非法值（超出合法幅度、RCT 設定升級）→ 拒絕寫入並提示，不靜默修正
 
@@ -128,7 +132,7 @@
 
 ## 9. 內容規範
 
-- 題目原文：依官方文件逐字翻譯並標註版本；教學註解另立「教學補充」欄位，與官方原文分開
+- 題目原文：CASP 依官方文件逐字收錄英文並附中譯（CC BY-NC-SA 允許改作）；**RoB 2、GRADE 只收英文原文、不附中譯**（D-L1）；教學註解另立「教學補充」欄位，與官方原文分開，RoB 2／GRADE 的教學補充須為自寫解說而非翻譯
 - 雙語：繁中 + 英文對照
 - 每篇 mock paper 刻意埋 2–3 個教學缺陷；初稿撰寫後，**指導者審定才算數**
 - 參考答案每題附來源
@@ -143,7 +147,7 @@
 - A2 A1 oracle 須含 ≥5 筆反直覺案例，涵蓋 ≥3 個 domain，類別至少包含：(i) 偏離發生但 ITT 分析適當、(ii) 有缺失資料但有證據顯示結果不受影響、(iii) 結果評估者知情但結果客觀、(iv) NI 導致的判斷、(v) Y 與 PY 不等價的分支（若官方存在）；每例註明觸發分支與 locator
 - A3 對決策表**每一列**逐一 mutation（改變其結果），每次至少一項測試必須 fail；以迴圈自動執行
 - A4 RoB 2 overall 矩陣：全 Low → Low；每個 domain 單獨 High → High；1 個 Some concerns → Some concerns 且無「可考慮判 High」提示；≥2 個 Some concerns、無 High → Some concerns 且有提示（不得輸出 High）；High 與 Some concerns 並存 → High
-- A5 GRADE：(i) 每因素逐一驗證合法幅度上下限與非法值被拒；(ii) RCT 起始任何組合皆不得出現升級效果；(iii) 降級加總超過可降範圍時結果為 Very low，不出錯；(iv) observational 且任一降級 ≠ 0 時升級欄位被拒；(v) 至少一組非邊界運算（如 RCT + 兩因素各 −1 → Low）
+- A5 GRADE：(i) 每因素逐一驗證合法幅度上下限與非法值被拒；(ii) RCT 起始：未解鎖時任何升級值皆無效果；已勾選解鎖但理由 trim 後為空 → 拒絕寫入；解鎖且有理由、降級皆 0 時升級才生效；(iii) 降級加總超過可降範圍時結果為 Very low，不出錯；(iv) observational 且任一降級 ≠ 0 時升級欄位被拒；(v) 至少一組非邊界運算（如 RCT + 兩因素各 −1 → Low）
 - A6 RoB 2：每個 domain 中，**每個必答位置**單獨留空時皆回傳「無法建議」；`not-applicable` 與 `unanswered` 被區分；補齊後產生建議；再清除任一必答後建議消失
 
 **B — 匯出 / 匯入**
@@ -155,7 +159,7 @@
 - C1 每個參考答案引用的段落 id 必須屬於該題在 definition 中的**允許集合**；注入一筆集合外 id → fail
 - C2 每題參考答案須有合法判斷值、trim 後非空理由、至少一個可解析來源；注入缺題、空字串、占位字（如「TODO」「N/A」）→ fail
 - C3 RoB 2 參考答案若 domain 判斷 ≠ 依其自身 SQ 算出的建議 → 推翻理由 trim 後非空且附方法學來源；所有此類項目輸出為指導者審定清單
-- C4 每題 definition 皆有非空的官方原文、繁中、英文欄位；教學補充為獨立欄位；注入缺一語言 → fail
+- C4 CASP：每題 definition 皆有非空的官方英文與繁中欄位；RoB 2／GRADE：每題有非空官方英文欄位，且**不得出現中譯欄位**（D-L1）；教學補充為獨立欄位；注入缺英文、CASP 缺中文、RoB 2／GRADE 出現中譯欄位 → 各自 fail
 
 **D — 介面（人工驗收清單）**
 - D1 四套工具各跑場景矩陣：完整作答、留一題未答、修改答案、重新整理後續作、匯出 → 指導者匯入 → 比對；每步預期結果寫入清單
@@ -171,11 +175,11 @@
   - P1 `docs/schema.md`：匯出 JSON 每欄型別、必填、enum、未知欄位政策、`contentHash` 計算範圍
   - P2 RoB 2 oracle 與 GRADE 規則表：自原始文件謄寫並附 locator（指導者提供或確認 RoB 2 guidance PDF 與 GRADE Handbook 版本）
   - P2 進度（2026-10-14）：原始文件已 ingest 至 Wiki。RoB 2 對照表見 `wiki/source-higgins2019-RoB2-detailed-guidance`（五領域已以頁面影像逐列核對；pdf-inspector 抽出的 Table 6 欄位錯位，**oracle 不得取自文字抽取**；Table 4 原文漏列一條路徑，以 Figure 1 為準）；GRADE 規則見 `wiki/source-schunemann2013-GRADE-handbook`、`wiki/source-zeng2022-GRADE34-imprecision`
-- **RoB 2／GRADE 動工前需使用者決定**（2026-10-14 待決）：
-  - D-L1 授權：RoB 2 guidance／cribsheet 為 **CC BY-NC-ND 4.0**、GRADE Handbook「翻譯需向編輯取得許可」→ 公開版的題目中譯不可散布。選項：英文原文 + 自寫教學補充（非翻譯），或先取得授權
-  - D-G1 發表偏差上限：Handbook Table 5.2 寫 ↓1–2，§5.2.5 內文寫最多 ↓1
-  - D-G2 不精確上限：Handbook 2013 最多 ↓2；GRADE 34（2022）可 ↓3
-  - D-G3 RCT 升級：Handbook 為「理論可行但罕見」，非禁止；現行 A5(ii) 為更嚴格的簡化
+- **RoB 2／GRADE 決策**：
+  - D-L1（**已決 2026-10-14**）：RoB 2 guidance／cribsheet 為 CC BY-NC-ND 4.0、GRADE Handbook 翻譯需編輯許可 → **題目只收英文原文，不收中譯**；中文僅限本專案自寫的「教學補充」（以自己的話解釋概念與判讀要點，不得逐句對應原文）
+  - D-G2（**已決 2026-10-14**）：不精確採 **GRADE 34（2022）**，合法值 0／−1／−2／−3
+  - D-G1（**已決 2026-10-14**）：發表偏差依 Handbook §5.2.5 內文，**最多 ↓1**（合法值 0／−1）；介面附教學提示說明 Table 5.2 寫 ↓1–2 與內文不一致
+  - D-G3（**已決 2026-10-14**）：RCT 起始允許升級但預設鎖定，須勾選確認並填理由才解鎖，附 Handbook 原文提示；降級皆 0 的前提不變
 - **公開發布阻擋**（任一未清不得公開 GitHub Pages）：
   - 朋友 repo 授權：取得同意或對方補 LICENSE；在此之前不複製其程式碼（2026-10-14 待處理）
   - ~~CASP 內容授權~~：已確認。兩份 2024 checklist PDF 第 12 頁明載 CC BY-NC-SA 4.0（2026-10-14）
@@ -207,3 +211,9 @@ r1 → r2（2026-10-14，依 `.ai-review/plan-verdict.md`）：
 r2 → r2.1（2026-10-14，實作 CASP 兩套時）：
 - §6.2 `not-applicable` 擴及 CASP 官方跳題規則（Q9=No → Q10 免答）
 - §11 CASP 授權依官方 PDF 確認為 CC BY-NC-SA 4.0，移出阻擋清單
+
+r2.1 → r2.2（2026-10-14，使用者決策）：
+- D-L1：RoB 2／GRADE 題目僅收英文原文，中文只用自寫教學補充；§9、C4 同步修改
+- D-G2：不精確採 GRADE 34，合法值至 −3；§7.3 同步修改
+- D-G1：發表偏差最多 ↓1；§7.3 同步修改
+- D-G3：RCT 升級改為「預設鎖定、確認＋理由解鎖」；§7.3、A5(ii) 同步修改
