@@ -1,5 +1,11 @@
 # 實證評讀練習室（Critical Appraisal Training）
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Click_Here-success?style=for-the-badge)](https://liangrxdev.github.io/critical-appraisal-training-tw/)
+[![Code: MIT](https://img.shields.io/badge/Code-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![Content: CC BY-NC-SA 4.0](https://img.shields.io/badge/Content-CC_BY--NC--SA_4.0-lightgrey.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+**線上版**：<https://liangrxdev.github.io/critical-appraisal-training-tw/>（純前端：作答只存在你的瀏覽器，上傳的 PDF 不會離開你的電腦）
+
 EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF，完成後與參考答案比對；指導者匯入學員作答檔，逐題並排批改。
 
 - 規格：[`docs/SPEC.md`](docs/SPEC.md)（r2，已經 Codex 規格覆審，見 `.ai-review/`）

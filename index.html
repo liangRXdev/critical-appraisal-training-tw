@@ -49,7 +49,8 @@
           <span class="field__label">文獻</span>
           <select id="paper-select"></select>
         </label>
-        <label class="btn btn--quiet" id="upload-label">
+        <label class="btn btn--upload" id="upload-label" tabindex="0" role="button" title="評讀你自己的文獻：PDF 只在這個瀏覽器中開啟，不會上傳到任何伺服器">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M12 18v-6M9.5 14.5 12 12l2.5 2.5"/></svg>
           上傳 PDF
           <input type="file" id="pdf-input" accept="application/pdf,.pdf" hidden>
         </label>

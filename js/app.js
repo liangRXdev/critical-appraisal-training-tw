@@ -457,6 +457,13 @@ function bind() {
     await openAppraisal(app.tool.toolId, ref, labelFor(app.tool, ref));
   });
 
+  // 上傳按鈕是 <label>，預設無法以鍵盤操作：補上 Enter／空白鍵
+  $("upload-label").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    $("pdf-input").click();
+  });
+
   $("pdf-input").addEventListener("change", (e) => {
     uploadNewPdf(e.target.files[0]);
     e.target.value = "";

@@ -23,6 +23,15 @@
   --radius-control: 6px;
   --radius-card: 10px;
   --header-h: 48px;
+  /* 上方兩層色塊：標題列（深藍）＋設定列（淡藍） */
+  --bar-bg: #1f4e79;
+  --bar-ink: #ffffff;
+  --bar-ink-2: #d3deea;
+  --bar-control: rgba(255, 255, 255, 0.14);
+  --bar-line: rgba(255, 255, 255, 0.6);
+  --band-bg: #e3edf7;
+  --band-line: #c5d5e6;
+  --band-control-line: #7f95ad;
   color-scheme: light;
 }
 
@@ -45,6 +54,14 @@
     --no: #f0895a;
     --ct: #f0c24a;
     --focus: #8cbbe8;
+    --bar-bg: #0f2a45;
+    --bar-ink: #e6eaf0;
+    --bar-ink-2: #b6c6d8;
+    --bar-control: rgba(255, 255, 255, 0.1);
+    --bar-line: rgba(255, 255, 255, 0.5);
+    --band-bg: #1a2a3c;
+    --band-line: #2b3e54;
+    --band-control-line: #5d7591;
     color-scheme: dark;
   }
 }
@@ -67,6 +84,14 @@
   --no: #f0895a;
   --ct: #f0c24a;
   --focus: #8cbbe8;
+  --bar-bg: #0f2a45;
+  --bar-ink: #e6eaf0;
+  --bar-ink-2: #b6c6d8;
+  --bar-control: rgba(255, 255, 255, 0.1);
+  --bar-line: rgba(255, 255, 255, 0.5);
+  --band-bg: #1a2a3c;
+  --band-line: #2b3e54;
+  --band-control-line: #5d7591;
   color-scheme: dark;
 }
 
@@ -99,15 +124,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
   gap: 16px;
   height: var(--header-h);
   padding: 0 20px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
+  background: var(--bar-bg);
+  color: var(--bar-ink);
 }
+.masthead :focus-visible { outline-color: var(--bar-ink); }
 
 .masthead__brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; flex: 1; }
 .masthead__title { font-weight: 700; font-size: 17px; white-space: nowrap; }
-.masthead__tool { color: var(--ink-3); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.masthead__tool { color: var(--bar-ink-2); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.masthead__modes { display: flex; gap: 4px; background: var(--sunken); padding: 3px; border-radius: 8px; }
+.masthead__modes { display: flex; gap: 4px; background: var(--bar-control); padding: 3px; border-radius: 8px; }
 
 .mode-tab {
   border: 0;
@@ -115,10 +141,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding: 5px 12px;
   border-radius: 6px;
   cursor: pointer;
-  color: var(--ink-2);
+  color: var(--bar-ink);
   font-size: 14px;
 }
-.mode-tab[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 500; box-shadow: 0 0 0 1px var(--line); }
+.mode-tab:hover { background: var(--bar-control); }
+.mode-tab[aria-pressed="true"] { background: var(--bar-ink); color: var(--bar-bg); font-weight: 700; }
 
 .icon-btn {
   display: grid;
@@ -135,6 +162,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .icon-btn[aria-pressed="true"] .icon-btn__enter { display: none; }
 .icon-btn[aria-pressed="true"] .icon-btn__exit { display: block; }
 .masthead .icon-btn + .icon-btn { margin-left: -8px; }
+.masthead .icon-btn { background: transparent; border-color: var(--bar-line); color: var(--bar-ink); }
+.masthead .icon-btn:hover { background: var(--bar-control); }
 
 /* ---------- banners ---------- */
 
@@ -179,6 +208,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .btn--quiet { border-color: transparent; background: transparent; color: var(--ink-2); }
 .btn--quiet:hover { background: var(--sunken); border-color: transparent; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* 上傳 PDF：評讀自己文獻的入口，比一般按鈕醒目、但不搶「匯出作答檔」的實心主色 */
+.btn--upload { border: 2px solid var(--primary); background: var(--surface); color: var(--primary); font-weight: 700; }
+.btn--upload:hover { background: var(--primary-soft); border-color: var(--primary); }
 
 .field { display: grid; gap: 2px; min-width: 0; }
 .field__label { font-size: 12px; color: var(--ink-3); }
@@ -213,8 +245,12 @@ textarea {
   align-items: center;
   gap: 6px 14px;
   padding: 7px 16px;
-  border-bottom: 1px solid var(--line);
+  background: var(--band-bg);
+  border-bottom: 1px solid var(--band-line);
 }
+.setup .field__label, .setup .progress { color: var(--ink-2); }
+.setup .field select, .setup .field input, .setup .btn:not(.btn--primary):not(.btn--quiet):not(.btn--upload) { border-color: var(--band-control-line); }
+.setup .btn--quiet:hover { background: var(--surface); }
 .setup__group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
 /* 設定列：欄位名稱放在控制項左側，整列只占一行高度 */
 .setup .field { display: flex; align-items: center; gap: 6px; }
