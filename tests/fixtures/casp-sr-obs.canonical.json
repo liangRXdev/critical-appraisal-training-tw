@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-obs",
+  "toolVersion": "casp-sr-obs@2024",
+  "contentHash": "__CURRENT__",
+  "paperRef": "mock:ppi-cap-risk",
+  "paperLabel": "PPI use and community-acquired pneumonia",
+  "metadata": { "reviewerName": "", "appraisalDate": "" },
+  "answers": {
+    "q1": "Y", "q2": "Y", "q3a": "Y", "q3b": "N", "q3c": "Y", "q3d": "Y",
+    "q4": "CT", "q5a": "Y", "q5b": "Y", "q6": "N", "q6_1": "Y", "q6_2": "Y",
+    "q7": "N", "q7_1": "Y", "q7_2": "CT", "q8": "CT", "q9": "N", "q10": "not-applicable",
+    "conclusion": "N"
+  },
+  "notes": { "q9": "Tiếng Việt / ภาษาไทย / 日本語 — Unicode 測試", "conclusion": "" },
+  "considerChecks": {},
+  "toolData": {
+    "summary": { "positive": "", "negative": "合併未校正 OR", "unknowns": "停藥傷害" }
+  },
+  "exportedAt": "2026-10-14T02:00:00.000Z"
+}

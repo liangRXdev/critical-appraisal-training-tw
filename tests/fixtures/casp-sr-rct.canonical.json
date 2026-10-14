@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-rct",
+  "toolVersion": "casp-sr-rct@2024",
+  "contentHash": "__CURRENT__",
+  "paperRef": "mock:melatonin-icu-delirium",
+  "paperLabel": "Prophylactic melatonin for the prevention of delirium",
+  "metadata": { "reviewerName": "王○明", "appraisalDate": "2026-10-14" },
+  "answers": {
+    "q1": "Y", "q2": "Y", "q3a": "N", "q3b": "Y", "q3c": "Y", "q3d": "Y",
+    "q4": "Y", "q5a": "Y", "q5b": "Y", "q6": "CT", "q6_1": "unanswered", "q6_2": "CT",
+    "q7": "N", "q7_1": "N", "q7_2": "CT", "q8": "CT", "q9": "Y", "q10": "CT",
+    "conclusion": "unanswered"
+  },
+  "notes": {
+    "q3a": "只有 MEDLINE，限英文 — 漏掉 Embase／CENTRAL 🙁",
+    "q6": "I² = 68%，固定效應？\n第二行"
+  },
+  "considerChecks": { "q3a": [0, 2, 5], "q6": [6, 7] },
+  "toolData": {
+    "summary": { "positive": "雙人獨立篩選", "negative": "搜尋不完整", "unknowns": "" }
+  },
+  "exportedAt": "2026-10-14T01:23:45.000Z"
+}

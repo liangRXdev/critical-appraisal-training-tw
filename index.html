@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>實證評讀練習室</title>
+  <meta name="description" content="EBM 評讀教學與指導工具：CASP SR/MA（RCT／觀察性研究）逐題練習、參考答案比對與指導者批改。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;600&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    try {
+      const t = localStorage.getItem("cat:pref:theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch {}
+  </script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead__brand">
+      <span class="masthead__title">實證評讀練習室</span>
+      <span class="masthead__tool" id="tool-title"></span>
+    </div>
+    <nav class="masthead__modes" aria-label="模式">
+      <button class="mode-tab" id="mode-learner" aria-pressed="true"><span class="mode-tab__long">學員</span>作答</button>
+      <button class="mode-tab" id="mode-instructor" aria-pressed="false"><span class="mode-tab__long">指導者</span>比對</button>
+    </nav>
+    <button class="icon-btn" id="theme-toggle" aria-label="切換深淺色">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </header>
+
+  <div id="banners" class="banners" aria-live="polite"></div>
+
+  <main id="view-learner" class="learner">
+    <section class="setup" aria-label="評讀設定">
+      <div class="setup__group">
+        <label class="field">
+          <span class="field__label">評讀工具</span>
+          <select id="tool-select"></select>
+        </label>
+        <label class="field">
+          <span class="field__label">文獻</span>
+          <select id="paper-select"></select>
+        </label>
+        <label class="btn btn--quiet" id="upload-label">
+          上傳 PDF
+          <input type="file" id="pdf-input" accept="application/pdf,.pdf" hidden>
+        </label>
+      </div>
+      <div class="setup__group">
+        <label class="field field--short">
+          <span class="field__label">評讀者</span>
+          <input type="text" id="reviewer-input" maxlength="100" autocomplete="name">
+        </label>
+        <label class="field field--short">
+          <span class="field__label">日期</span>
+          <input type="date" id="date-input">
+        </label>
+        <span class="progress" id="progress" role="status"></span>
+        <button class="btn" id="btn-report">檢視報告</button>
+        <button class="btn btn--primary" id="btn-export">匯出作答檔</button>
+        <button class="btn btn--quiet" id="btn-reset">重設</button>
+      </div>
+    </section>
+
+    <div class="pane-tabs" role="tablist" aria-label="切換窗格">
+      <button role="tab" class="pane-tab" id="tab-paper" aria-selected="true">閱讀文獻</button>
+      <button role="tab" class="pane-tab" id="tab-appraise" aria-selected="false">逐題評讀</button>
+    </div>
+
+    <div class="workspace">
+      <article class="paper-pane" id="paper-pane" aria-label="文獻"></article>
+      <section class="appraise-pane" id="appraise-pane" aria-label="評讀"></section>
+    </div>
+  </main>
+
+  <main id="view-instructor" class="instructor" hidden></main>
+
+  <dialog id="report-dialog" class="report-dialog" aria-label="評讀報告">
+    <div class="report-dialog__bar">
+      <button class="btn btn--primary" id="btn-print">列印／存成 PDF</button>
+      <button class="btn" id="btn-close-report">關閉</button>
+    </div>
+    <div id="report-body" class="report"></div>
+  </dialog>
+
+  <footer class="colophon">
+    CASP checklists © Critical Appraisal Skills Programme，依
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a>
+    授權改作（中譯與教學補充）。範例文獻為虛構教學素材，不可作為臨床依據。
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

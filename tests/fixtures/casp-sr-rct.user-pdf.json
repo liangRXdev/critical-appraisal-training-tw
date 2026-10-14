@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-rct",
+  "toolVersion": "casp-sr-rct@2024",
+  "contentHash": "__CURRENT__",
+  "paperRef": "user-pdf:3f1c2a9e-7b4d-4e8a-9c21-5d6e7f8a9b0c",
+  "paperLabel": "mock:melatonin-icu-delirium",
+  "metadata": { "reviewerName": "李○華", "appraisalDate": "2026-10-13" },
+  "answers": {
+    "q1": "Y", "q2": "Y", "q3a": "Y", "q3b": "Y", "q3c": "CT", "q3d": "Y",
+    "q4": "Y", "q5a": "Y", "q5b": "Y", "q6": "Y", "q6_1": "N", "q6_2": "CT",
+    "q7": "Y", "q7_1": "N", "q7_2": "CT", "q8": "Y", "q9": "Y", "q10": "Y",
+    "conclusion": "Y"
+  },
+  "notes": { "q6_1": "subgroup 是事後分析" },
+  "considerChecks": { "q1": [0, 1, 2, 3] },
+  "toolData": { "summary": { "positive": "整體嚴謹", "negative": "", "unknowns": "" } },
+  "exportedAt": "2026-10-13T08:00:00.000Z"
+}
