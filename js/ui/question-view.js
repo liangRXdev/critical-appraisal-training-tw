@@ -55,6 +55,14 @@ function redpenBlock(row, mockPaper, status) {
   );
 }
 
+// 句中關鍵字以 <mark> 螢光標示（純文字切段，不用 innerHTML）
+function markKeywords(text, keywords) {
+  const escaped = keywords.filter(Boolean).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (!escaped.length) return [text];
+  const re = new RegExp(`(${escaped.join("|")})`, "gi");
+  return text.split(re).map((part, i) => (i % 2 === 1 ? h("mark", { class: "kw" }, part) : part));
+}
+
 function candidatesBlock(state) {
   if (!state) return null;
   if (state.status === "loading") return h("p", { class: "candidates__note" }, "正在擷取 PDF 文字…");
@@ -69,7 +77,7 @@ function candidatesBlock(state) {
         "button",
         { type: "button", class: "candidate", onclick: () => state.onJump(c.pageNumber) },
         h("span", { class: "candidate__page" }, `第 ${c.pageNumber} 頁 · 關鍵字「${c.keyword}」`),
-        c.sentence
+        markKeywords(c.sentence, state.keywords)
       )
     )
   );

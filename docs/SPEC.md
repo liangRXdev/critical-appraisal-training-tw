@@ -170,6 +170,12 @@
 - **動工前置（寫引擎與匯出之前）**：
   - P1 `docs/schema.md`：匯出 JSON 每欄型別、必填、enum、未知欄位政策、`contentHash` 計算範圍
   - P2 RoB 2 oracle 與 GRADE 規則表：自原始文件謄寫並附 locator（指導者提供或確認 RoB 2 guidance PDF 與 GRADE Handbook 版本）
+  - P2 進度（2026-10-14）：原始文件已 ingest 至 Wiki。RoB 2 對照表見 `wiki/source-higgins2019-RoB2-detailed-guidance`（五領域已以頁面影像逐列核對；pdf-inspector 抽出的 Table 6 欄位錯位，**oracle 不得取自文字抽取**；Table 4 原文漏列一條路徑，以 Figure 1 為準）；GRADE 規則見 `wiki/source-schunemann2013-GRADE-handbook`、`wiki/source-zeng2022-GRADE34-imprecision`
+- **RoB 2／GRADE 動工前需使用者決定**（2026-10-14 待決）：
+  - D-L1 授權：RoB 2 guidance／cribsheet 為 **CC BY-NC-ND 4.0**、GRADE Handbook「翻譯需向編輯取得許可」→ 公開版的題目中譯不可散布。選項：英文原文 + 自寫教學補充（非翻譯），或先取得授權
+  - D-G1 發表偏差上限：Handbook Table 5.2 寫 ↓1–2，§5.2.5 內文寫最多 ↓1
+  - D-G2 不精確上限：Handbook 2013 最多 ↓2；GRADE 34（2022）可 ↓3
+  - D-G3 RCT 升級：Handbook 為「理論可行但罕見」，非禁止；現行 A5(ii) 為更嚴格的簡化
 - **公開發布阻擋**（任一未清不得公開 GitHub Pages）：
   - 朋友 repo 授權：取得同意或對方補 LICENSE；在此之前不複製其程式碼（2026-10-14 待處理）
   - ~~CASP 內容授權~~：已確認。兩份 2024 checklist PDF 第 12 頁明載 CC BY-NC-SA 4.0（2026-10-14）

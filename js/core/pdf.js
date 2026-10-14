@@ -47,16 +47,50 @@ export async function openPdf(file) {
   }
 }
 
-export async function renderPage(doc, pageNumber, canvas, width) {
+// 渲染單頁：canvas（影像）＋ textLayer（透明文字，供關鍵字高亮）。回傳該頁的文字 span 陣列
+export async function renderPage(doc, pageNumber, pageEl, width) {
+  const lib = globalThis.pdfjsLib;
   const page = await doc.getPage(pageNumber);
   const base = page.getViewport({ scale: 1 });
+  const cssViewport = page.getViewport({ scale: width / base.width });
   const ratio = globalThis.devicePixelRatio || 1;
-  const viewport = page.getViewport({ scale: (width / base.width) * ratio });
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${viewport.height / ratio}px`;
-  await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+  const pixelViewport = page.getViewport({ scale: (width / base.width) * ratio });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = pixelViewport.width;
+  canvas.height = pixelViewport.height;
+  canvas.style.width = `${cssViewport.width}px`;
+  canvas.style.height = `${cssViewport.height}px`;
+  const textLayer = document.createElement("div");
+  textLayer.className = "textLayer";
+  pageEl.style.width = `${cssViewport.width}px`;
+  pageEl.style.height = `${cssViewport.height}px`;
+  pageEl.style.setProperty("--scale-factor", String(cssViewport.scale));
+  pageEl.replaceChildren(canvas, textLayer);
+
+  // canvas 與文字層並行：canvas 渲染依賴 requestAnimationFrame（分頁在背景時會暫停），
+  // 文字層不需要，先完成才能讓關鍵字高亮與候選句子不被畫面渲染卡住
+  const textDivs = [];
+  const text = page
+    .getTextContent()
+    .then((content) => lib.renderTextLayer({ textContentSource: content, container: textLayer, viewport: cssViewport, textDivs }).promise)
+    .catch(() => {}); // 文字層失敗不影響閱讀，只是無法高亮
+  const image = page.render({ canvasContext: canvas.getContext("2d"), viewport: pixelViewport }).promise;
+  await text;
+  return { textDivs, image };
+}
+
+// 將含任一關鍵字的文字 span 標為螢光黃（整段 span，PDF 文字切分以行或片段為單位）
+export function highlightTextDivs(textDivs, keywords) {
+  const lowered = keywords.map((k) => k.toLowerCase());
+  let hits = 0;
+  for (const div of textDivs) {
+    const text = div.textContent.toLowerCase();
+    const hit = lowered.length > 0 && lowered.some((k) => text.includes(k));
+    div.classList.toggle("kw-hit", hit);
+    if (hit) hits++;
+  }
+  return hits;
 }
 
 export async function extractText(doc) {

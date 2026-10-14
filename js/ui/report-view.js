@@ -33,8 +33,30 @@ export function renderReport(root, def, appraisal, progress) {
       { class: "table-wrap" },
       h(
         "table",
-        { class: "review-table" },
-        h("thead", {}, h("tr", {}, h("th", {}, "題號"), h("th", {}, "題目"), h("th", {}, "作答"), h("th", {}, "筆記"))),
+        { class: "review-table report-table" },
+        h(
+          "colgroup",
+          {},
+          h("col", { class: "report-table__num" }),
+          h("col", { class: "report-table__question" }),
+          h("col", { class: "report-table__answer" }),
+          h("col", { class: "report-table__note" })
+        ),
+        h(
+          "thead",
+          {},
+          // 報告資訊列：只在列印時顯示，與欄位名稱一起在每頁頂端重複
+          h(
+            "tr",
+            { class: "print-only" },
+            h(
+              "th",
+              { colspan: "4", class: "print-caption" },
+              `${def.shortTitle.zh}｜${appraisal.paperLabel}｜評讀者：${appraisal.metadata.reviewerName || "（未填）"}｜${appraisal.metadata.appraisalDate || "日期未填"}`
+            )
+          ),
+          h("tr", {}, h("th", {}, "題號"), h("th", {}, "題目"), h("th", {}, "作答"), h("th", {}, "筆記"))
+        ),
         h("tbody", {}, rows)
       )
     ),

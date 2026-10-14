@@ -7,7 +7,7 @@ import { buildReview } from "./core/compare.js";
 import { h, mount, download } from "./core/dom.js";
 import { openPdf, extractText, findCandidates, hasTextLayer } from "./core/pdf.js";
 import * as casp from "./engines/casp.js";
-import { renderMockPaper, renderPdfDropzone, renderPdf, showPdfError } from "./ui/paper-view.js";
+import { renderMockPaper, renderPdfDropzone, createPdfViewer, showPdfError } from "./ui/paper-view.js";
 import { renderAppraise } from "./ui/question-view.js";
 import { renderReport } from "./ui/report-view.js";
 import { renderInstructor } from "./ui/instructor-view.js";
@@ -21,7 +21,7 @@ const app = {
   paper: null,
   index: 0,
   revealed: false,
-  pdf: null, // { doc, pages, status }
+  pdf: null, // { doc, pages, status, viewer }
   lang: "zh",
   showEvidence: true,
   pane: "paper",
@@ -209,10 +209,13 @@ function candidatesState() {
   if (!item) return null;
   return {
     status: "ready",
+    keywords: item.keywords,
     items: findCandidates(app.pdf.pages, item.keywords),
     onJump: (n) => {
       setPane("paper");
-      $(`pdf-page-${n}`)?.scrollIntoView({ block: "start" });
+      const pane = $("paper-pane");
+      const page = $(`pdf-page-${n}`);
+      if (page) pane.scrollTo({ top: Math.max(0, page.offsetTop - 60) });
     },
   };
 }
@@ -231,6 +234,7 @@ function renderAppraisePane() {
       app.index = Math.max(0, Math.min(i, def.items.length));
       renderAppraisePane();
       renderPaper();
+      app.pdf?.viewer?.setKeywords(def.items[app.index]?.keywords ?? []);
       $("appraise-pane").scrollTop = 0;
     },
     onAnswer: (itemId, value) => {
@@ -284,9 +288,14 @@ async function loadPdfInto(file) {
   mount(root, h("p", { class: "dropzone" }, "正在開啟 PDF…"));
   try {
     const { doc } = await openPdf(file);
-    app.pdf = { doc, pages: [], status: "loading" };
+    const viewer = createPdfViewer(root, doc, {
+      zoom: Number(pref("pdfZoom")) || 1,
+      onZoom: (z) => pref("pdfZoom", String(z)),
+    });
+    app.pdf = { doc, pages: [], status: "loading", viewer };
     renderAppraisePane();
-    await renderPdf(root, app.pdf);
+    viewer.setKeywords(app.tool.definition.items[app.index]?.keywords ?? []);
+    viewer.render().catch(() => {}); // 頁面影像可晚到；文字擷取不等它
     const pages = await extractText(doc);
     app.pdf.pages = pages;
     app.pdf.status = hasTextLayer(pages) ? "ready" : "no-text";
@@ -307,6 +316,14 @@ async function uploadNewPdf(file) {
   setPane("paper");
   await loadPdfInto(file);
   renderSetup();
+}
+
+// ---------- 列印 ----------
+
+function preparePrint() {
+  if (!app.tool || !app.appraisal) return;
+  const def = app.tool.definition;
+  renderReport($("print-root"), def, app.appraisal, casp.progress(def, app.appraisal.answers));
 }
 
 // ---------- 事件 ----------
@@ -346,7 +363,12 @@ function bind() {
     $("report-dialog").showModal();
   });
   $("btn-close-report").addEventListener("click", () => $("report-dialog").close());
-  $("btn-print").addEventListener("click", () => window.print());
+  $("btn-print").addEventListener("click", () => {
+    preparePrint();
+    window.print();
+  });
+  // Ctrl+P 也印報告（不論對話框是否開著），版面一致
+  window.addEventListener("beforeprint", preparePrint);
 
   $("btn-reset").addEventListener("click", async () => {
     const ok = confirm("清除這篇文獻的所有作答、筆記與摘要？此動作無法復原。");
@@ -379,10 +401,54 @@ function bind() {
   });
 }
 
+// ---------- 文獻／評讀分隔線（寬度為 per-viewer 偏好） ----------
+
+const APPRAISE_DEFAULT = 460;
+
+function setAppraiseWidth(px, save = false) {
+  const ws = document.querySelector(".workspace");
+  const max = Math.max(340, Math.min(900, ws.clientWidth - 320));
+  const width = Math.round(Math.min(max, Math.max(340, px)));
+  ws.style.setProperty("--appraise-w", `${width}px`);
+  $("splitter").setAttribute("aria-valuenow", String(width));
+  if (save) pref("appraiseWidth", String(width));
+  return width;
+}
+
+function bindSplitter() {
+  const splitter = $("splitter");
+  const ws = document.querySelector(".workspace");
+  setAppraiseWidth(Number(pref("appraiseWidth")) || APPRAISE_DEFAULT);
+  splitter.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    splitter.setPointerCapture(e.pointerId);
+    ws.classList.add("is-resizing");
+    const move = (ev) => setAppraiseWidth(ws.getBoundingClientRect().right - ev.clientX);
+    const up = (ev) => {
+      setAppraiseWidth(ws.getBoundingClientRect().right - ev.clientX, true);
+      ws.classList.remove("is-resizing");
+      splitter.removeEventListener("pointermove", move);
+      splitter.removeEventListener("pointerup", up);
+    };
+    splitter.addEventListener("pointermove", move);
+    splitter.addEventListener("pointerup", up);
+  });
+  splitter.addEventListener("keydown", (e) => {
+    const now = Number(splitter.getAttribute("aria-valuenow")) || APPRAISE_DEFAULT;
+    if (e.key === "ArrowLeft") setAppraiseWidth(now + 20, true);
+    else if (e.key === "ArrowRight") setAppraiseWidth(now - 20, true);
+    else return;
+    e.preventDefault();
+  });
+  splitter.addEventListener("dblclick", () => setAppraiseWidth(APPRAISE_DEFAULT, true));
+  window.addEventListener("resize", () => setAppraiseWidth(Number(splitter.getAttribute("aria-valuenow")) || APPRAISE_DEFAULT));
+}
+
 // ---------- 啟動 ----------
 
 async function start() {
   bind();
+  bindSplitter();
   setPane("paper");
   app.showEvidence = pref("evidence") !== "0";
   const tool = getTool(pref("tool")) ?? tools.find((t) => t.status === "ready");

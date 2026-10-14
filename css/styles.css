@@ -223,11 +223,34 @@ textarea {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(380px, 540px);
+  grid-template-columns: minmax(0, 1fr) 9px var(--appraise-w, 460px);
 }
+.workspace.is-resizing { cursor: col-resize; user-select: none; }
 
 .paper-pane, .appraise-pane { position: relative; overflow-y: auto; min-width: 0; }
-.appraise-pane { border-left: 1px solid var(--line); background: var(--surface); }
+.appraise-pane { display: flex; flex-direction: column; overflow-x: hidden; overflow-wrap: anywhere; background: var(--surface); }
+
+.splitter {
+  position: relative;
+  cursor: col-resize;
+  background: var(--sunken);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  touch-action: none;
+}
+.splitter::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 3px;
+  height: 36px;
+  margin-top: -18px;
+  border-radius: 2px;
+  background: var(--ink-3);
+  opacity: 0.5;
+}
+.splitter:hover, .splitter:focus-visible, .workspace.is-resizing .splitter { background: var(--primary-soft); }
 
 /* ---------- paper (journal page) ---------- */
 
@@ -272,9 +295,31 @@ textarea {
 
 /* ---------- PDF ---------- */
 
-.pdf { padding: 20px; display: grid; gap: 16px; justify-items: center; }
-.pdf canvas { background: #fff; box-shadow: 0 0 0 1px var(--line); max-width: 100%; }
+.pdf-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.pdf-toolbar .btn { min-width: 36px; font-size: 16px; }
+.pdf-toolbar__zoom { min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; font-size: 14px; }
+.pdf-toolbar__hits { margin-left: auto; font-size: 13px; color: var(--ink-2); }
+.pdf { padding: 20px; display: grid; gap: 12px; justify-items: center; overflow-x: auto; }
+.pdf__page { position: relative; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.pdf__page canvas { display: block; }
 .pdf__page-label { font-size: 12px; color: var(--ink-3); justify-self: start; }
+
+/* pdf.js 3.x 文字層：文字透明疊在 canvas 上，供選取與關鍵字高亮 */
+.textLayer { position: absolute; inset: 0; overflow: hidden; line-height: 1; text-size-adjust: none; forced-color-adjust: none; transform-origin: 0 0; z-index: 2; }
+.textLayer span, .textLayer br { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.textLayer ::selection { background: rgba(31, 78, 121, 0.25); }
+.textLayer .kw-hit { background: rgba(255, 228, 92, 0.6); border-radius: 2px; mix-blend-mode: multiply; }
 
 .dropzone {
   margin: 40px auto;
@@ -289,7 +334,11 @@ textarea {
 
 /* ---------- appraisal pane ---------- */
 
-.item-nav { padding: 16px 20px 12px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+.item-nav { background: var(--surface); padding: 14px 20px 10px; border-bottom: 1px solid var(--line); display: grid; gap: 6px; }
+/* 視窗夠高才把題目導覽固定在上緣；矮螢幕讓它隨內容捲走，留空間給題目，翻頁鈕仍固定在下緣 */
+@media screen and (min-height: 760px) {
+  .item-nav { position: sticky; top: 0; z-index: 3; }
+}
 .item-nav__section { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .item-nav__label { font-size: 12px; color: var(--ink-3); width: 22px; font-weight: 700; }
 
@@ -320,7 +369,7 @@ textarea {
   pointer-events: none;
 }
 
-.question { padding: 20px; display: grid; gap: 16px; }
+.question { padding: 20px; display: grid; gap: 16px; flex: 1; }
 .question__section { font-size: 13px; color: var(--ink-3); }
 .question__parent { font-size: 14px; color: var(--ink-2); padding-left: 10px; border-left: 3px solid var(--line); }
 .question__title { font-size: 20px; line-height: 1.5; font-weight: 700; margin: 0; }
@@ -373,9 +422,16 @@ details.aside p { font-size: 14px; color: var(--ink-2); margin: 8px 0 0; }
   cursor: pointer;
 }
 .candidate__page { color: var(--ink-3); font-size: 12px; display: block; }
+mark.kw {
+  color: inherit;
+  background-image: linear-gradient(transparent 50%, var(--highlight) 50%, var(--highlight) 95%, transparent 95%);
+  background-color: transparent;
+  padding: 0 1px;
+}
 .candidates__note { font-size: 12px; color: var(--ink-3); margin: 0; }
 
-.pager { display: flex; justify-content: space-between; gap: 8px; padding: 12px 20px 24px; border-top: 1px solid var(--line); }
+.pager { position: sticky; bottom: 0; z-index: 3; background: var(--surface); display: flex; justify-content: space-between; gap: 8px; padding: 10px 20px; border-top: 1px solid var(--line); }
+.finish { flex: 1; }
 
 /* ---------- reference (red pen) ---------- */
 
@@ -435,7 +491,7 @@ details.aside p { font-size: 14px; color: var(--ink-2); margin: 8px 0 0; }
 
 /* ---------- responsive ---------- */
 
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
   .masthead { padding: 0 16px; gap: 10px; }
   .masthead__tool { display: none; }
   .masthead__title { font-size: 15px; overflow: hidden; text-overflow: ellipsis; }
@@ -451,6 +507,8 @@ details.aside p { font-size: 14px; color: var(--ink-2); margin: 8px 0 0; }
   .pane-tab[aria-selected="true"] { color: var(--ink); font-weight: 700; border-bottom-color: var(--primary); }
   .learner { display: block; height: auto; min-height: 0; }
   .workspace { display: block; }
+  .splitter { display: none; }
+  .item-nav, .pager { position: static; }
   .appraise-pane { border-left: 0; }
   .workspace[data-pane="paper"] .appraise-pane, .workspace[data-pane="appraise"] .paper-pane { display: none; }
   .paper { padding: 20px 16px 48px; }
@@ -467,10 +525,25 @@ details.aside p { font-size: 14px; color: var(--ink-2); margin: 8px 0 0; }
 
 /* ---------- print ---------- */
 
+.print-root, .print-only { display: none; }
+
 @media print {
-  body { background: #fff; color: #000; }
-  body > :not(.report-dialog) { display: none !important; }
-  .report-dialog { position: static; display: block; width: auto; max-height: none; border: 0; box-shadow: none; }
-  .report-dialog__bar { display: none; }
-  .report { padding: 0; }
+  @page { size: A4; margin: 14mm 10mm; }
+  html, body { background: #fff; color: #000; }
+  body > * { display: none !important; }
+  /* @page 邊界在列印對話框選「邊界：無」時會被覆蓋，因此左右另以內距保底；上下以 clone 讓每頁片段都留白 */
+  body > .print-root { display: block !important; padding: 6mm 10mm; overflow: visible; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .print-root .table-wrap { overflow: visible; }
+  .print-root table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .print-root .report-table__num { width: 8%; }
+  .print-root .report-table__question { width: 44%; }
+  .print-root .report-table__answer { width: 14%; }
+  .print-root .report-table__note { width: 34%; }
+  .print-root td { overflow-wrap: anywhere; }
+  .print-root thead { display: table-header-group; }
+  .print-root tr.print-only { display: table-row; }
+  .print-root tr { break-inside: avoid; page-break-inside: avoid; }
+  .print-root th { color: #000; border-bottom: 1.5px solid #000; }
+  .print-root .print-caption { font-size: 11px; font-weight: 400; color: #444; border-bottom: 0; padding-bottom: 2px; }
+  .print-root .muted, .print-root .note { color: #333; }
 }

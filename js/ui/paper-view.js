@@ -1,7 +1,7 @@
 // 左欄：mock paper（期刊排版 + 螢光筆證據）或使用者 PDF
 
 import { h, mount } from "../core/dom.js";
-import { renderPage } from "../core/pdf.js";
+import { renderPage, highlightTextDivs } from "../core/pdf.js";
 
 export function renderMockPaper(root, mockPaper, { lang, evidenceFor, showEvidence, onLang, onToggleEvidence }) {
   const langBtn = (value, text) =>
@@ -66,15 +66,74 @@ export function renderPdfDropzone(root, { message, actionLabel, onFile }) {
   mount(root, zone);
 }
 
-export async function renderPdf(root, pdf) {
-  const wrap = h("div", { class: "pdf" });
-  mount(root, wrap);
-  const width = Math.min(root.clientWidth - 40, 900);
-  for (let n = 1; n <= pdf.doc.numPages; n++) {
-    const canvas = h("canvas", { id: `pdf-page-${n}`, "aria-label": `第 ${n} 頁` });
-    wrap.append(h("span", { class: "pdf__page-label" }, `第 ${n} / ${pdf.doc.numPages} 頁`), canvas);
-    await renderPage(pdf.doc, n, canvas, width);
+const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
+
+// PDF 檢視器：縮放工具列（固定在窗格上緣）＋ 逐頁渲染 ＋ 關鍵字螢光高亮
+export function createPdfViewer(root, doc, { zoom = 1, onZoom } = {}) {
+  let current = zoom;
+  let keywords = [];
+  let renderToken = 0;
+  const pageText = new Map(); // pageNumber → textDivs
+
+  const label = h("span", { class: "pdf-toolbar__zoom", "aria-live": "polite" });
+  const hitsLabel = h("span", { class: "pdf-toolbar__hits" });
+  const setZoom = (z) => {
+    current = Math.min(3, Math.max(0.5, Math.round(z * 100) / 100));
+    onZoom?.(current);
+    render();
+  };
+  const step = (dir) => {
+    const next = dir > 0 ? ZOOM_STEPS.find((s) => s > current + 0.001) : [...ZOOM_STEPS].reverse().find((s) => s < current - 0.001);
+    if (next) setZoom(next);
+  };
+  const toolbar = h(
+    "div",
+    { class: "pdf-toolbar", role: "toolbar", "aria-label": "PDF 檢視" },
+    h("button", { type: "button", class: "btn btn--quiet", "aria-label": "縮小", onclick: () => step(-1) }, "−"),
+    label,
+    h("button", { type: "button", class: "btn btn--quiet", "aria-label": "放大", onclick: () => step(1) }, "＋"),
+    h("button", { type: "button", class: "btn btn--quiet", onclick: () => setZoom(1) }, "符合寬度"),
+    hitsLabel
+  );
+  const pages = h("div", { class: "pdf" });
+  mount(root, toolbar, pages);
+
+  function applyHighlights() {
+    let hits = 0;
+    for (const divs of pageText.values()) hits += highlightTextDivs(divs, keywords);
+    hitsLabel.textContent = keywords.length ? `關鍵字標示 ${hits} 處` : "";
   }
+
+  async function render() {
+    const token = ++renderToken;
+    label.textContent = `${Math.round(current * 100)}%`;
+    const fitWidth = Math.max(240, Math.min(root.clientWidth - 40, 900));
+    const width = fitWidth * current;
+    const anchor = root.scrollHeight ? root.scrollTop / root.scrollHeight : 0;
+    pageText.clear();
+    pages.replaceChildren();
+    const images = [];
+    for (let n = 1; n <= doc.numPages; n++) {
+      if (token !== renderToken) return; // 期間又縮放了，放棄舊的渲染
+      const pageEl = h("div", { class: "pdf__page", id: `pdf-page-${n}`, "aria-label": `第 ${n} 頁` });
+      pages.append(h("span", { class: "pdf__page-label" }, `第 ${n} / ${doc.numPages} 頁`), pageEl);
+      const { textDivs, image } = await renderPage(doc, n, pageEl, width);
+      pageText.set(n, textDivs);
+      images.push(image.catch(() => {}));
+      if (n === 1) root.scrollTop = anchor * root.scrollHeight;
+    }
+    if (token !== renderToken) return;
+    applyHighlights();
+    await Promise.all(images);
+  }
+
+  return {
+    render,
+    setKeywords(next) {
+      keywords = next ?? [];
+      applyHighlights();
+    },
+  };
 }
 
 export function showPdfError(root, message, onFile) {

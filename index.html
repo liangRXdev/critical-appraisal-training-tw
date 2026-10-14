@@ -72,6 +72,7 @@
 
     <div class="workspace">
       <article class="paper-pane" id="paper-pane" aria-label="文獻"></article>
+      <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-label="拖曳調整評讀欄寬度（方向鍵微調，雙擊還原）" tabindex="0"></div>
       <section class="appraise-pane" id="appraise-pane" aria-label="評讀"></section>
     </div>
   </main>
@@ -91,6 +92,9 @@
     <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license noopener" target="_blank">CC BY-NC-SA 4.0</a>
     授權改作（中譯與教學補充）。範例文獻為虛構教學素材，不可作為臨床依據。
   </footer>
+
+  <!-- 列印專用：列印時把報告複製到這裡，避開 dialog（top layer、overflow）對分頁與表頭重複的干擾 -->
+  <div id="print-root" class="report print-root" aria-hidden="true"></div>
 
   <script type="module" src="js/app.js"></script>
 </body>
