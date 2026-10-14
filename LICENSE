@@ -1,0 +1,56 @@
+本專案採雙重授權：程式碼為 MIT；評讀內容為 CC BY-NC-SA 4.0。第三方原文依其原授權，見下方第三節。
+This project is dual-licensed: source code under MIT, appraisal content under CC BY-NC-SA 4.0.
+Third-party source texts remain under their own licences (section 3).
+
+====================================================================
+1. 程式碼 Source code — MIT License
+====================================================================
+
+適用：index.html、css/、js/app.js、js/core/、js/engines/、js/ui/、js/tools/registry.js、tests/、tools/，以及其他非第 2、3 節所列的檔案。
+
+Copyright (c) 2026 liangRXdev
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+====================================================================
+2. 評讀內容 Appraisal content — CC BY-NC-SA 4.0
+====================================================================
+
+適用：js/tools/<工具>/definition.js、mock-paper.js、reference.js 中由本專案撰寫的文字，
+包括 CASP 題目中譯、教學補充、虛構範例文獻、參考答案與其理由，以及 docs/ 下的文件。
+
+Copyright (c) 2026 liangRXdev
+Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+International License: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+CASP 中譯為 CASP checklists 的改作，依原授權條件（相同方式分享）必須以 CC BY-NC-SA 4.0 釋出。
+範例文獻為虛構教學素材，不可作為臨床依據。
+
+====================================================================
+3. 第三方原文 Third-party source texts（不屬於本專案授權範圍）
+====================================================================
+
+- CASP Checklists (2024) © Critical Appraisal Skills Programme，CC BY-NC-SA 4.0
+  https://casp-uk.net/ ；英文題目逐字收錄，中譯為本專案改作。
+- RoB 2 detailed guidance (Higgins JPT, Savović J, Page MJ, Sterne JAC; 22 August 2019)
+  © RoB 2 Development Group，CC BY-NC-ND 4.0 https://www.riskofbias.info/
+  只收錄英文原文、未翻譯、未改作。
+- GRADE Handbook (Schünemann H, Brożek J, Guyatt G, Oxman A, eds; updated October 2013)
+  僅引用因素名稱、等級定義與短句；重製或翻譯需經編輯同意，本專案未翻譯。
+- Zeng L, et al. GRADE Guidance 34. J Clin Epidemiol 2022;150:216–224（引用規則，未收錄全文）。

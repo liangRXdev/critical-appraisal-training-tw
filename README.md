@@ -5,7 +5,7 @@ EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF
 - 規格：[`docs/SPEC.md`](docs/SPEC.md)（r2，已經 Codex 規格覆審，見 `.ai-review/`）
 - 匯出格式：[`docs/schema.md`](docs/schema.md)
 
-## 目前狀態（v1 開發中）
+## 目前狀態（v1）
 
 | 工具 | 狀態 |
 |---|---|
@@ -40,6 +40,8 @@ tests/               C1–C4 內容完整性、B1–B3 匯出入、引擎、儲�
 **內容不可變（SPEC D9）**：發布後若修改題目、範例文獻或參考答案，必須同時把 `toolVersion` 升版；否則舊作答檔會因 `contentHash` 不符而被拒絕比對。
 
 ## 授權與內容來源
+
+- **程式碼：MIT；評讀內容（中譯、教學補充、虛構範例、參考答案）：CC BY-NC-SA 4.0**。第三方原文依各自授權，詳見 [`LICENSE`](LICENSE)。
 
 - GRADE Handbook（Schünemann et al., 2013）重製或翻譯需經編輯同意：本專案只引用因素名稱與短句原文，不翻譯（SPEC D-L1），中文說明為自寫教學補充。
 - RoB 2 © RoB 2 Development Group，以 [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) 授權：本專案只收錄英文原文、不翻譯（SPEC D-L1），中文說明為自寫教學補充。

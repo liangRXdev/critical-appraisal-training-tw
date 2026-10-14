@@ -9,5 +9,5 @@
     "test": "node --test \"tests/*.test.js\"",
     "review:casp": "node tools/casp-review-sheet.mjs"
   },
-  "license": "SEE LICENSE IN README.md"
+  "license": "SEE LICENSE IN LICENSE"
 }
