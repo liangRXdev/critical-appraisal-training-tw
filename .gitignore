@@ -1,3 +1,12 @@
 CASP-2024-SR-MA-of-RCT-main/
 .remember/
 node_modules/
+# 評讀用的真實文獻（版權所有，不得提交或隨 GitHub Pages 發布）
+/*.pdf
+# 本機產生的審定用對照表
+review/
+# 匯出的作答檔（評讀紀錄，不提交）
+/rob2_*.json
+/grade_*.json
+/casp-sr-*_*.json
+/casp-review-*.md

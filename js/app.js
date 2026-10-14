@@ -48,17 +48,27 @@ function pref(key, value) {
 // ---------- 保存 ----------
 
 let saveTimer = null;
+function saveNow() {
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  if (!app.appraisal) return;
+  const key = appraisalKey(app.appraisal.toolId, app.appraisal.paperRef);
+  const r = store.save(key, app.appraisal);
+  const issue = r.ok ? null : r.reason;
+  if (issue !== app.storageIssue) {
+    app.storageIssue = issue;
+    renderBanners();
+  }
+}
+
 function persist() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    const key = appraisalKey(app.appraisal.toolId, app.appraisal.paperRef);
-    const r = store.save(key, app.appraisal);
-    const issue = r.ok ? null : r.reason;
-    if (issue !== app.storageIssue) {
-      app.storageIssue = issue;
-      renderBanners();
-    }
-  }, 250);
+  saveTimer = setTimeout(saveNow, 250);
+}
+
+// 尚在延遲中的變更：離開、重新整理、切換分頁前立即寫入，避免最後幾筆作答遺失
+function flushPending() {
+  if (saveTimer !== null) saveNow();
 }
 
 // ---------- 開啟評讀 ----------
@@ -74,6 +84,7 @@ function rememberedPaper(tool) {
 }
 
 async function openAppraisal(toolId, paperRef, paperLabel) {
+  flushPending(); // 先寫入前一份評讀尚在延遲中的變更
   const tool = getTool(toolId);
   const paper = resolvePaper(tool, paperRef);
   if (paper.kind === "invalid") throw new Error(`找不到文獻 ${paperRef}`);
@@ -473,10 +484,16 @@ function bind() {
   });
   // Ctrl+P 也印報告（不論對話框是否開著），版面一致
   window.addEventListener("beforeprint", preparePrint);
+  window.addEventListener("pagehide", flushPending);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flushPending();
+  });
 
   $("btn-reset").addEventListener("click", async () => {
     const ok = confirm("清除這篇文獻的所有作答、筆記與摘要？此動作無法復原。");
     if (!ok) return;
+    clearTimeout(saveTimer); // 取消尚未寫入的變更，否則重開時會把舊作答寫回
+    saveTimer = null;
     store.remove(appraisalKey(app.appraisal.toolId, app.appraisal.paperRef));
     const { toolId, paperRef, paperLabel } = app.appraisal;
     await openAppraisal(toolId, paperRef, paperLabel); // user-pdf 的 app.pdf 保留，不需重新上傳

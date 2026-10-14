@@ -1,5 +1,5 @@
 // 虛構教學用範例文獻：作者、期刊、註冊號與所有數據皆為虛構，不可作為臨床依據。
-// 刻意埋入的教學缺陷（指導者審定前為草稿）：
+// 刻意埋入的教學缺陷（2026-10-14 指導者審定）：
 //   F1 標題與摘要篩選由單人執行，僅抽 20% 複核（q3b）
 //   F2 合併未校正（crude）OR，並把病例對照與世代研究混在同一主分析；16 篇未評估發表偏差（q6）
 //   F3 限制段落未提及殘餘干擾與適應症干擾（q7）
@@ -8,7 +8,8 @@
 export const mockPapers = [
   {
     id: "ppi-cap-risk",
-    status: "draft",
+    status: "reviewed",
+    reviewedOn: "2026-10-14",
     fictional: true,
     title: {
       en: "Proton pump inhibitor use and the risk of community-acquired pneumonia in adults: a systematic review and meta-analysis of observational studies",
@@ -45,7 +46,7 @@ export const mockPapers = [
             id: "obs-protocol",
             items: ["q1", "q6_1", "q6_2"],
             en: "The protocol was registered (PROSPERO CRD42099000001, fictional) and pre-specified subgroup analyses by study design (cohort vs case-control) and a random-effects meta-regression on mean duration of PPI exposure, with the hypothesis that risk would be highest in the first 30 days of use.",
-            zh: "計畫書已註冊（PROSPERO CRD42099000001，虛構），預先指定依研究設計（世代 vs 病例對照）的次族群分析，以及以平均 PPI 暴露時間為變項的隨機效應統合迴歸，假設風險在用藥前 30 天最高。",
+            zh: "計畫書已註冊（PROSPERO CRD42099000001，虛構），預先指定依研究設計（世代 vs 病例對照）的次族群分析，以及以平均 PPI 暴露時間為變項的隨機效應統合迴歸，假設風險在開始用藥後最初 30 天最高。",
           },
           {
             id: "obs-eligibility",

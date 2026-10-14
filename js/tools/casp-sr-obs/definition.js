@@ -1,5 +1,5 @@
 // CASP Checklist: For systematic reviews with meta-analysis of observational studies (2024)
-// 英文欄位逐字取自官方 PDF；中文為翻譯（待指導者審定）；teaching 為本專案教學補充，非官方內容。
+// 英文欄位逐字取自官方 PDF；中文為翻譯（2026-10-14 指導者審定）；teaching 為本專案教學補充，非官方內容。
 // © CASP, CC BY-NC-SA 4.0 — https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 const t = (en, zh) => ({ en, zh });
@@ -19,7 +19,8 @@ export const definition = {
     url: "https://casp-uk.net/casp-tools-checklists/systematic-reviews-meta-analysis-observational-studies/",
     license: "CC BY-NC-SA 4.0",
   },
-  translationStatus: "draft",
+  translationStatus: "reviewed",
+  translationReviewedOn: "2026-10-14",
   preamble: t(
     "During critical appraisal, never make assumptions about what the researchers have done. If it is not possible to tell, use the “Can’t tell” response box. If you can’t tell, at best it means the researchers have not been explicit or transparent, but at worst it could mean the researchers have not undertaken a particular task or process. Once you’ve finished the critical appraisal, if there are a large number of “Can’t tell” responses, consider whether the findings of the study are trustworthy and interpret the results with caution.",
     "評讀時，切勿對研究者做了什麼做任何假設。若無法判斷，請勾選「無法判斷」。無法判斷往好處想，代表研究者未明確或透明地說明；往壞處想，可能代表研究者根本沒有執行某項工作或程序。完成評讀後，若「無法判斷」的數量很多，請思考該研究結果是否可信，並謹慎解讀。"
@@ -655,7 +656,7 @@ export const definition = {
       ),
       considerIntro: t(
         "Value equals the Outcome/s (Benefit minus Harm) divided by the Resources required for implementation.",
-        "價值 =（效益 − 傷害）所得的結果 ÷ 實施所需資源。"
+        "價值＝結果（效益－傷害）÷ 實施所需資源。"
       ),
       consider: [
         t(

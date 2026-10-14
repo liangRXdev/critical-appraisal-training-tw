@@ -1,5 +1,5 @@
 // 虛構教學用範例文獻：作者、期刊、註冊號與所有數據皆為虛構，不可作為臨床依據。
-// 刻意埋入的教學缺陷（指導者審定前為草稿）：
+// 刻意埋入的教學缺陷（2026-10-14 指導者審定）：
 //   F1 搜尋只用 MEDLINE 且限英文，未搜尋試驗登錄平台（q3a）
 //   F2 I² = 68% 卻使用固定效應模型（q6）
 //   F3 劑量次族群為事後追加、未做交互作用檢定卻下結論（q6_1、q7_1）
@@ -8,7 +8,8 @@
 export const mockPapers = [
   {
     id: "melatonin-icu-delirium",
-    status: "draft",
+    status: "reviewed",
+    reviewedOn: "2026-10-14",
     fictional: true,
     title: {
       en: "Prophylactic melatonin for the prevention of delirium in critically ill adults: a systematic review and meta-analysis of randomised controlled trials",

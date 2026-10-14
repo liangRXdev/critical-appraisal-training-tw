@@ -9,7 +9,7 @@ EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF
 
 | 工具 | 狀態 |
 |---|---|
-| CASP SR/MA of RCTs（2024） | 可用；中譯、範例文獻、參考答案為**草稿，待指導者審定** |
+| CASP SR/MA of RCTs（2024） | 可用；官方英文原文＋中譯；中譯、範例文獻與參考答案已由指導者審定（2026-10-14） |
 | CASP SR/MA of observational studies（2024） | 同上 |
 | RoB 2（parallel、effect of assignment） | 可用；題目為官方英文原文（CC BY-NC-ND，未翻譯），中文為自寫教學補充；決策表、範例文獻與參考答案已由指導者審定（2026-10-14） |
 | GRADE（單一 outcome） | 可用；因素名稱為 Handbook 英文原文，中文為自寫教學補充；規則依 SPEC D-G1～D-G3；規則、範例文獻與參考答案已由指導者審定（2026-10-14） |
@@ -19,6 +19,7 @@ EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF
 ```bash
 npm start   # http://localhost:3000（ES modules 必須經 HTTP 載入，不能直接開 file://）
 npm test    # node:test，無需安裝套件
+npm run review:casp   # 產生 CASP 中譯與參考答案的審定對照表 → review/casp-review.html（不提交）
 ```
 
 無建置工具，部署即上傳整個資料夾（GitHub Pages）。外部依賴只有 PDF.js 3.11.174（cdnjs，上傳 PDF 時才載入）與 Google Fonts。
@@ -44,4 +45,4 @@ tests/               C1–C4 內容完整性、B1–B3 匯出入、引擎、儲�
 - RoB 2 © RoB 2 Development Group，以 [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) 授權：本專案只收錄英文原文、不翻譯（SPEC D-L1），中文說明為自寫教學補充。
 - CASP checklists © Critical Appraisal Skills Programme，以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 授權（見官方 PDF 第 12 頁）。本專案的中譯與教學補充屬改作，同樣以 CC BY-NC-SA 4.0 釋出，僅限非商業用途。
 - 範例文獻（mock paper）為虛構教學素材，作者、期刊、註冊號與數據皆非真實，不可作為臨床依據。
-- 互動設計參考 unisyuan/CASP-2024-SR-MA-of-RCT；本專案未複製其程式碼。**公開發布前需取得原作者同意**（SPEC §11）。
+- 互動設計參考 unisyuan/CASP-2024-SR-MA-of-RCT，感謝原作者；本專案未複製其程式碼、文字或樣式。

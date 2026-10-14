@@ -1,4 +1,4 @@
-// 參考答案（草稿，待指導者審定）。key = mock paper id。
+// 參考答案（2026-10-14 指導者審定）。key = mock paper id。
 // sources：mock = 範例文獻段落；doc = 方法學文件與頁碼（CASP 頁碼依 2024 官方 PDF）
 
 const mock = (paragraphId) => ({ type: "mock", paragraphId });
@@ -10,7 +10,8 @@ const casp = (locator) => ({
 
 export const references = {
   "ppi-cap-risk": {
-    status: "draft",
+    status: "reviewed",
+    reviewedOn: "2026-10-14",
     answers: {
       q1: {
         answer: "Y",
