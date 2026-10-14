@@ -10,7 +10,8 @@ export function renderMockPaper(root, mockPaper, { lang, evidenceFor, showEviden
   const paragraphs = mockPaper.sections.map((section) => [
     h("h2", {}, lang === "en" ? section.heading.en : section.heading.zh),
     section.paragraphs.map((p) => {
-      const evidence = showEvidence && evidenceFor && p.items.includes(evidenceFor);
+      const targets = Array.isArray(evidenceFor) ? evidenceFor : evidenceFor ? [evidenceFor] : [];
+      const evidence = showEvidence && p.items.some((it) => targets.includes(it));
       return h(
         "p",
         { id: `para-${p.id}`, class: [lang === "en" ? "is-en" : "", evidence ? "is-evidence" : ""].join(" ").trim(), dataset: { paragraph: p.id } },
@@ -39,7 +40,7 @@ export function renderMockPaper(root, mockPaper, { lang, evidenceFor, showEviden
     )
   );
 
-  if (showEvidence && evidenceFor) {
+  if (showEvidence && (Array.isArray(evidenceFor) ? evidenceFor.length : evidenceFor)) {
     // 只捲動文獻窗格本身，不帶動整頁（手機版窗格不是捲動容器，則不動）
     const first = root.querySelector(".is-evidence");
     if (first && root.scrollHeight > root.clientHeight) {

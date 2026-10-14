@@ -37,10 +37,11 @@
 | 值 | 意義 |
 |---|---|
 | `"Y"` / `"N"` / `"CT"` | CASP 官方選項 Yes / No / Can't tell |
+| `"Y"` / `"PY"` / `"PN"` / `"N"` / `"NI"` | RoB 2 選項（Yes／Probably yes／Probably no／No／No information）|
 | `"unanswered"` | 未作答 |
 | `"not-applicable"` | 依官方跳題規則免答（由引擎決定，學員不能手選） |
 
-### 跨欄位不變量（CASP）
+### 跨欄位不變量（CASP；RoB 2 見 §5）
 
 - `answers.q9 === "N"` ⇔ `answers.q10 === "not-applicable"`
   - 依據：CASP 2024 兩份 checklist 第 10 頁 Section D 註記：Q9 答 No 時不必回答 Q10
@@ -68,9 +69,27 @@
 - 每欄 string，≤ 4000 字元，可空
 - 學員自由結論，程式不推導（SPEC N9）
 
-### RoB 2、GRADE
+### RoB 2（`rob2`）
 
-v1 尚未上線，待前置 P2 完成後補定義。
+```json
+{
+  "preliminary": { "experimental": "", "comparator": "", "outcome": "", "numericalResult": "" },
+  "judgements": { "D1": "unanswered", "D2": "unanswered", "D3": "unanswered", "D4": "unanswered", "D5": "unanswered", "overall": "unanswered" },
+  "overrideReasons": { "D1": "", "D2": "", "D3": "", "D4": "", "D5": "", "overall": "" }
+}
+```
+
+- `preliminary.*`：string，≤ 500 字元，可空（v1 effect of interest 固定為 assignment，不存欄位）
+- `judgements.*`：`"Low"`／`"Some concerns"`／`"High"`／`"unanswered"`；六個 key 必須齊全
+- `overrideReasons.*`：string，≤ 4000 字元，可空；學員判斷與演算法建議不同時填寫
+- `answers`：key 恰好等於全部 signalling question id（`1.1`…`5.3`）；value 為 `Y`／`PY`／`PN`／`N`／`NI`／`unanswered`／`not-applicable`，且須符合各題可用選項（3.2 無 `NI`）
+- 跨欄位不變量：依條件題規則被跳過的題 **必須** 是 `not-applicable`；需作答的題 **不得** 是 `not-applicable`
+- `notes`：key ⊆ signalling question id ∪ {`D1`…`D5`, `overall`}
+- `considerChecks`：RoB 2 無考量清單，必須是 `{}`
+
+### GRADE
+
+尚未上線。
 
 ## 6. 匯入結果
 

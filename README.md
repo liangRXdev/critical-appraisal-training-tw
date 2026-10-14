@@ -11,8 +11,8 @@ EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF
 |---|---|
 | CASP SR/MA of RCTs（2024） | 可用；中譯、範例文獻、參考答案為**草稿，待指導者審定** |
 | CASP SR/MA of observational studies（2024） | 同上 |
-| RoB 2 | 未開始；待前置 P2（RoB 2 guidance 原文與 algorithm 表） |
-| GRADE | 未開始；待前置 P2（GRADE Handbook 升降級規則） |
+| RoB 2（parallel、effect of assignment） | 可用；題目為官方英文原文（CC BY-NC-ND，未翻譯），中文為自寫教學補充；範例文獻與參考答案為**草稿**；決策表待指導者方法學簽核（SPEC D5） |
+| GRADE | 未開始；規則已定案（SPEC D-G1～D-G3） |
 
 ## 開發
 
@@ -28,15 +28,18 @@ npm test    # node:test，無需安裝套件
 ```
 js/tools/<toolId>/   definition.js（題目）、mock-paper.js（虛構範例）、reference.js（參考答案）
 js/engines/casp.js   逐題作答、官方跳題規則（Q9=No → Q10 免答）、完成度
+js/engines/rob2.js   條件題路由、SQ → domain 建議判斷、overall 建議；決策表在 rob2-tables.js
+js/engines/index.js  依工具分派：初始狀態、完成度、匯入驗證
 js/core/             schema 驗證、匯出入、localStorage、比對、PDF
 js/ui/               畫面
-tests/               C1–C4 內容完整性、B1–B3 匯出入、引擎、儲存
+tests/               C1–C4 內容完整性、B1–B3 匯出入、引擎、儲存；RoB 2 以 tests/rob2-oracle.js（依流程圖獨立撰寫）窮舉比對＋逐列 mutation
 ```
 
 **內容不可變（SPEC D9）**：發布後若修改題目、範例文獻或參考答案，必須同時把 `toolVersion` 升版；否則舊作答檔會因 `contentHash` 不符而被拒絕比對。
 
 ## 授權與內容來源
 
+- RoB 2 © RoB 2 Development Group，以 [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) 授權：本專案只收錄英文原文、不翻譯（SPEC D-L1），中文說明為自寫教學補充。
 - CASP checklists © Critical Appraisal Skills Programme，以 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) 授權（見官方 PDF 第 12 頁）。本專案的中譯與教學補充屬改作，同樣以 CC BY-NC-SA 4.0 釋出，僅限非商業用途。
 - 範例文獻（mock paper）為虛構教學素材，作者、期刊、註冊號與數據皆非真實，不可作為臨床依據。
 - 互動設計參考 unisyuan/CASP-2024-SR-MA-of-RCT；本專案未複製其程式碼。**公開發布前需取得原作者同意**（SPEC §11）。

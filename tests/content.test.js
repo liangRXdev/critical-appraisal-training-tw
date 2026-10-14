@@ -4,7 +4,8 @@ import assert from "node:assert/strict";
 import { tools } from "../js/tools/registry.js";
 import { referenceErrors, definitionErrors, clone } from "./helpers.js";
 
-const ready = tools.filter((t) => t.status === "ready");
+// CASP 專用結構檢查；RoB 2 見 rob2-content.test.js
+const ready = tools.filter((t) => t.status === "ready" && t.definition.engine === "casp");
 
 for (const tool of ready) {
   test(`${tool.toolId}: definition 雙語與結構完整（C4）`, () => {

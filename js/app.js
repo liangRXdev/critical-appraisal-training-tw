@@ -7,6 +7,9 @@ import { buildReview } from "./core/compare.js";
 import { h, mount, download } from "./core/dom.js";
 import { openPdf, extractText, findCandidates, hasTextLayer } from "./core/pdf.js";
 import * as casp from "./engines/casp.js";
+import * as rob2 from "./engines/rob2.js";
+import { getAdapter } from "./engines/index.js";
+import { renderRob2, ROB2_STEPS, rob2StepEvidence, rob2StepKeywords, rob2FirstOpenStep } from "./ui/rob2-view.js";
 import { renderMockPaper, renderPdfDropzone, createPdfViewer, showPdfError } from "./ui/paper-view.js";
 import { renderAppraise } from "./ui/question-view.js";
 import { renderReport } from "./ui/report-view.js";
@@ -81,8 +84,7 @@ async function openAppraisal(toolId, paperRef, paperLabel) {
   app.loadIssue = loaded.status === "invalid" ? { key, errors: loaded.errors } : null;
   app.appraisal = loaded.status === "ok" ? loaded.value : await createAppraisal(tool, paperRef, paperLabel);
   app.storageIssue = loaded.status === "unavailable" ? "unavailable" : store.isQuarantined(key) ? "quarantined" : null;
-  const firstOpen = tool.definition.items.findIndex((i) => app.appraisal.answers[i.id] === casp.UNANSWERED);
-  app.index = firstOpen === -1 ? tool.definition.items.length : firstOpen;
+  app.index = firstOpenStep();
   if (paper.kind === "mock") app.pdf = null;
 
   pref("tool", toolId);
@@ -141,7 +143,7 @@ function banner(text, tone = "") {
 
 function renderSetup() {
   const def = app.tool.definition;
-  $("tool-title").textContent = def.title.zh;
+  $("tool-title").textContent = def.title.zh ?? def.shortTitle.zh;
   mount(
     $("tool-select"),
     tools.map((t) =>
@@ -175,12 +177,34 @@ function renderSetup() {
 }
 
 function renderProgress() {
-  const { done, total } = casp.progress(app.tool.definition, app.appraisal.answers);
-  mount($("progress"), "已完成 ", h("strong", {}, `${done} / ${total}`), " 題");
+  const def = app.tool.definition;
+  const { done, total } = getAdapter(def).progress(def, app.appraisal);
+  mount($("progress"), "已完成 ", h("strong", {}, `${done} / ${total}`), isRob2() ? " 項" : " 題");
 }
 
-function currentItemId() {
-  return app.tool.definition.items[app.index]?.id ?? null;
+// ---------- 步驟（CASP：逐題＋摘要；RoB 2：前置、D1–D5、整體） ----------
+
+const isRob2 = () => app.tool.definition.engine === "rob2";
+
+function stepCount() {
+  return isRob2() ? ROB2_STEPS.length : app.tool.definition.items.length + 1;
+}
+
+function firstOpenStep() {
+  const def = app.tool.definition;
+  if (isRob2()) return rob2FirstOpenStep(def, app.appraisal);
+  const i = def.items.findIndex((it) => app.appraisal.answers[it.id] === casp.UNANSWERED);
+  return i === -1 ? def.items.length : i;
+}
+
+function stepEvidence() {
+  const def = app.tool.definition;
+  return isRob2() ? rob2StepEvidence(def, ROB2_STEPS[app.index]) : def.items[app.index]?.id ?? null;
+}
+
+function stepKeywords() {
+  const def = app.tool.definition;
+  return isRob2() ? rob2StepKeywords(def, ROB2_STEPS[app.index]) : def.items[app.index]?.keywords ?? [];
 }
 
 function renderPaper() {
@@ -188,7 +212,7 @@ function renderPaper() {
   if (app.paper.kind === "mock") {
     renderMockPaper(root, app.paper.mockPaper, {
       lang: app.lang,
-      evidenceFor: currentItemId(),
+      evidenceFor: stepEvidence(),
       showEvidence: app.showEvidence,
       onLang: (lang) => { app.lang = lang; renderPaper(); },
       onToggleEvidence: () => { app.showEvidence = !app.showEvidence; pref("evidence", app.showEvidence ? "1" : "0"); renderPaper(); },
@@ -205,12 +229,12 @@ function renderPaper() {
 function candidatesState() {
   if (app.paper.kind !== "user-pdf" || !app.pdf) return null;
   if (app.pdf.status !== "ready") return { status: app.pdf.status };
-  const item = app.tool.definition.items[app.index];
-  if (!item) return null;
+  const keywords = stepKeywords();
+  if (!keywords.length) return null;
   return {
     status: "ready",
-    keywords: item.keywords,
-    items: findCandidates(app.pdf.pages, item.keywords),
+    keywords,
+    items: findCandidates(app.pdf.pages, keywords),
     onJump: (n) => {
       setPane("paper");
       const pane = $("paper-pane");
@@ -220,23 +244,75 @@ function candidatesState() {
   };
 }
 
+function goStep(i) {
+  app.index = Math.max(0, Math.min(i, stepCount() - 1));
+  renderAppraisePane();
+  renderPaper();
+  app.pdf?.viewer?.setKeywords(stepKeywords());
+  $("appraise-pane").scrollTop = 0;
+}
+
+function reveal() {
+  const def = app.tool.definition;
+  if (!getAdapter(def).isComplete(def, app.appraisal) || app.paper.kind !== "mock") return;
+  app.revealed = true;
+  renderAppraisePane();
+}
+
+function setNote(key, text) {
+  if (text) app.appraisal.notes[key] = text;
+  else delete app.appraisal.notes[key];
+  persist();
+}
+
 function renderAppraisePane() {
   const def = app.tool.definition;
   const review = app.revealed ? buildReview(app.appraisal, def, app.paper) : null;
-  renderAppraise($("appraise-pane"), def, app.appraisal, {
+  const common = {
     index: app.index,
-    progress: casp.progress(def, app.appraisal.answers),
+    progress: getAdapter(def).progress(def, app.appraisal),
     paperKind: app.paper.kind,
     mockPaper: app.paper.mockPaper,
     review: review?.mode === "compare" ? review : null,
     candidates: candidatesState(),
-    onGo: (i) => {
-      app.index = Math.max(0, Math.min(i, def.items.length));
+    onGo: goStep,
+    onNote: setNote,
+    onReveal: reveal,
+  };
+  if (isRob2()) {
+    const keepScroll = () => {
+      const pane = $("appraise-pane");
+      const top = pane.scrollTop;
       renderAppraisePane();
-      renderPaper();
-      app.pdf?.viewer?.setKeywords(def.items[app.index]?.keywords ?? []);
-      $("appraise-pane").scrollTop = 0;
-    },
+      pane.scrollTop = top;
+    };
+    renderRob2($("appraise-pane"), def, app.appraisal, {
+      ...common,
+      onAnswer: (qid, value) => {
+        app.appraisal.answers = rob2.setAnswer(def, app.appraisal.answers, qid, value);
+        persist();
+        renderProgress();
+        keepScroll();
+      },
+      onJudgement: (key, value) => {
+        app.appraisal.toolData.judgements[key] = value;
+        persist();
+        renderProgress();
+        keepScroll();
+      },
+      onOverride: (key, text) => {
+        app.appraisal.toolData.overrideReasons[key] = text;
+        persist();
+      },
+      onPrelim: (field, text) => {
+        app.appraisal.toolData.preliminary[field] = text;
+        persist();
+      },
+    });
+    return;
+  }
+  renderAppraise($("appraise-pane"), def, app.appraisal, {
+    ...common,
     onAnswer: (itemId, value) => {
       app.appraisal.answers = casp.setAnswer(def, app.appraisal.answers, itemId, value);
       persist();
@@ -250,19 +326,9 @@ function renderAppraisePane() {
       else delete app.appraisal.considerChecks[itemId];
       persist();
     },
-    onNote: (itemId, text) => {
-      if (text) app.appraisal.notes[itemId] = text;
-      else delete app.appraisal.notes[itemId];
-      persist();
-    },
     onSummary: (field, text) => {
       app.appraisal.toolData.summary[field] = text;
       persist();
-    },
-    onReveal: () => {
-      if (!casp.isComplete(def, app.appraisal.answers) || app.paper.kind !== "mock") return;
-      app.revealed = true;
-      renderAppraisePane();
     },
   });
 }
@@ -294,7 +360,7 @@ async function loadPdfInto(file) {
     });
     app.pdf = { doc, pages: [], status: "loading", viewer };
     renderAppraisePane();
-    viewer.setKeywords(app.tool.definition.items[app.index]?.keywords ?? []);
+    viewer.setKeywords(stepKeywords());
     viewer.render().catch(() => {}); // 頁面影像可晚到；文字擷取不等它
     const pages = await extractText(doc);
     app.pdf.pages = pages;
@@ -323,7 +389,7 @@ async function uploadNewPdf(file) {
 function preparePrint() {
   if (!app.tool || !app.appraisal) return;
   const def = app.tool.definition;
-  renderReport($("print-root"), def, app.appraisal, casp.progress(def, app.appraisal.answers));
+  renderReport($("print-root"), def, app.appraisal, getAdapter(def).progress(def, app.appraisal));
 }
 
 // ---------- 事件 ----------
@@ -359,7 +425,7 @@ function bind() {
   $("btn-export").addEventListener("click", () => download(exportFileName(app.appraisal), serializeAppraisal(app.appraisal)));
 
   $("btn-report").addEventListener("click", () => {
-    renderReport($("report-body"), app.tool.definition, app.appraisal, casp.progress(app.tool.definition, app.appraisal.answers));
+    renderReport($("report-body"), app.tool.definition, app.appraisal, getAdapter(app.tool.definition).progress(app.tool.definition, app.appraisal));
     $("report-dialog").showModal();
   });
   $("btn-close-report").addEventListener("click", () => $("report-dialog").close());

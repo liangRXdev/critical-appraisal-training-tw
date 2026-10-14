@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "toolId": "rob2",
+  "toolVersion": "rob2@2019-08",
+  "contentHash": "__CURRENT__",
+  "paperRef": "mock:iron-fatigue-ckd",
+  "paperLabel": "IRON-FAT open-label randomised trial",
+  "metadata": { "reviewerName": "陳○華", "appraisalDate": "2026-10-14" },
+  "answers": {
+    "1.1": "Y", "1.2": "PY", "1.3": "N",
+    "2.1": "Y", "2.2": "Y", "2.3": "Y", "2.4": "PN", "2.5": "not-applicable", "2.6": "N", "2.7": "PN",
+    "3.1": "N", "3.2": "N", "3.3": "Y", "3.4": "unanswered",
+    "4.1": "N", "4.2": "N", "4.3": "Y", "4.4": "Y", "4.5": "PY",
+    "5.1": "NI", "5.2": "N", "5.3": "unanswered"
+  },
+  "notes": { "2.3": "口服組有人因腸胃不適停藥 — 算試驗情境嗎？", "D4": "FACIT 是自填量表 ✍️" },
+  "considerChecks": {},
+  "toolData": {
+    "preliminary": { "experimental": "Ferric carboxymaltose IV", "comparator": "Ferrous sulfate 口服", "outcome": "FACIT-Fatigue 12 週", "numericalResult": "MD 4.1 (95% CI 1.2 to 7.0)" },
+    "judgements": { "D1": "Low", "D2": "Some concerns", "D3": "unanswered", "D4": "High", "D5": "unanswered", "overall": "unanswered" },
+    "overrideReasons": { "D1": "", "D2": "我判斷偏離仍與試驗有關", "D3": "", "D4": "", "D5": "", "overall": "" }
+  },
+  "exportedAt": "2026-10-14T03:00:00.000Z"
+}

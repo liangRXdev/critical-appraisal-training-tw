@@ -38,8 +38,8 @@ function itemNav(def, answers, index, review, onGo) {
   return h("nav", { class: "item-nav", "aria-label": "題目導覽" }, sections, finishBtn);
 }
 
-function redpenBlock(row, mockPaper, status) {
-  const same = row.match === "same" || row.match === "skipped";
+export function redpenBlock(row, mockPaper, status) {
+  const same = row.match === "same" || row.match === "skipped" || row.match === "equivalent";
   return h(
     "section",
     { class: `redpen ${same ? "redpen--same" : ""}`, "aria-label": "參考答案" },
@@ -63,7 +63,7 @@ function markKeywords(text, keywords) {
   return text.split(re).map((part, i) => (i % 2 === 1 ? h("mark", { class: "kw" }, part) : part));
 }
 
-function candidatesBlock(state) {
+export function candidatesBlock(state) {
   if (!state) return null;
   if (state.status === "loading") return h("p", { class: "candidates__note" }, "正在擷取 PDF 文字…");
   if (state.status === "no-text") return h("p", { class: "candidates__note" }, "無法擷取文字（可能是掃描檔），關鍵字比對不可用。");

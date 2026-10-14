@@ -3,7 +3,7 @@
 import { SCHEMA_VERSION, validateAppraisal } from "./schema.js";
 import { contentHash } from "./canonical.js";
 import { resolvePaper } from "../tools/registry.js";
-import * as casp from "../engines/casp.js";
+import { getAdapter } from "../engines/index.js";
 
 export async function createAppraisal(tool, paperRef, paperLabel) {
   const paper = resolvePaper(tool, paperRef);
@@ -17,10 +17,10 @@ export async function createAppraisal(tool, paperRef, paperLabel) {
     paperRef,
     paperLabel,
     metadata: { reviewerName: "", appraisalDate: "" },
-    answers: casp.normalizeAnswers(def, casp.emptyAnswers(def)),
+    answers: getAdapter(def).emptyAnswers(def),
     notes: {},
     considerChecks: {},
-    toolData: { summary: Object.fromEntries(def.summaryFields.map((f) => [f.id, ""])) },
+    toolData: getAdapter(def).emptyToolData(def),
     exportedAt: new Date().toISOString(),
   };
 }

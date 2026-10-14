@@ -6,7 +6,7 @@ import { buildReview } from "../js/core/compare.js";
 import { getTool, resolvePaper } from "../js/tools/registry.js";
 import { loadFixture, clone } from "./helpers.js";
 
-const FIXTURES = ["casp-sr-rct.canonical.json", "casp-sr-obs.canonical.json", "casp-sr-rct.user-pdf.json"];
+const FIXTURES = ["casp-sr-rct.canonical.json", "casp-sr-obs.canonical.json", "casp-sr-rct.user-pdf.json", "rob2.canonical.json"];
 
 async function rejects(data, pathPattern) {
   const text = typeof data === "string" ? data : JSON.stringify(data);
@@ -99,7 +99,7 @@ test("B2: 指名反例 —— 非 JSON、未知工具、版本、雜湊、較新
   const r = await rejects("{ not json", null);
   assert.match(r.errors[0].message, /不是有效的 JSON/);
   await rejects("[]", /^$/);
-  await rejects({ ...clone(base), toolId: "rob2" }, /^toolId$/); // 尚未上線
+  await rejects({ ...clone(base), toolId: "grade" }, /^toolId$/); // 尚未上線
   await rejects({ ...clone(base), toolId: "no-such-tool" }, /^toolId$/);
   await rejects({ ...clone(base), toolVersion: "casp-sr-rct@2018" }, /^toolVersion$/);
   await rejects({ ...clone(base), contentHash: "sha256:" + "0".repeat(64) }, /^contentHash$/);
@@ -152,4 +152,49 @@ test("比對：mock 作答逐題分類 same / different / unanswered / skipped",
   assert.equal(byId.q10.match, "different"); // 學員 Q9=N 跳過，參考答案為 CT
   const t = review.totals;
   assert.equal(t.same + t.different + t.unanswered + t.skipped, review.rows.length);
+});
+
+// RoB 2：B2 專屬反例與比對
+test("B2 rob2：答案值、路由不變量、toolData 結構的反例皆被拒", async () => {
+  const base = await loadFixture("rob2.canonical.json");
+  const cases = [
+    [(d) => (d.answers["1.1"] = "CT"), /^answers\.1\.1$/],
+    [(d) => (d.answers["3.2"] = "NI"), /^answers\.3\.2$/],
+    [(d) => (d.answers["2.5"] = "Y"), /^answers\.2\.5$/],
+    [(d) => (d.answers["2.7"] = "not-applicable"), /^answers\.2\.7$/],
+    [(d) => delete d.answers["5.3"], /^answers\.5\.3$/],
+    [(d) => (d.toolData.judgements.D1 = "Moderate"), /^toolData\.judgements\.D1$/],
+    [(d) => delete d.toolData.judgements.overall, /^toolData\.judgements\.overall$/],
+    [(d) => (d.toolData.overrideReasons.D2 = 5), /^toolData\.overrideReasons\.D2$/],
+    [(d) => (d.toolData.preliminary.outcome = "x".repeat(501)), /^toolData\.preliminary\.outcome$/],
+    [(d) => (d.toolData.preliminary.effect = "adhering"), /^toolData\.preliminary\.effect$/],
+    [(d) => delete d.toolData.preliminary, /^toolData\.preliminary$/],
+    [(d) => (d.considerChecks = { "1.1": [0] }), /^considerChecks$/],
+    [(d) => (d.notes.D9 = "x"), /^notes\.D9$/],
+    [(d) => (d.toolData.summary = {}), /^toolData\.summary$/],
+  ];
+  for (const [mutate, path] of cases) {
+    const d = clone(base);
+    mutate(d);
+    await rejects(d, path);
+  }
+});
+
+test("rob2 比對：Y≡PY、N≡PN 標為意涵相同；NA 對 NA 為皆免答；判斷列逐一比對", async () => {
+  const fixture = await loadFixture("rob2.canonical.json");
+  const r = await parseAppraisal(JSON.stringify(fixture));
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const review = buildReview(r.value, r.tool.definition, r.paper);
+  const by = Object.fromEntries(review.rows.map((x) => [x.itemId, x]));
+  assert.equal(by["1.1"].match, "same");
+  assert.equal(by["1.2"].match, "equivalent"); // PY vs Y
+  assert.equal(by["2.3"].match, "different"); // Y vs PN
+  assert.equal(by["2.5"].match, "skipped");
+  assert.equal(by["2.7"].match, "different"); // 學員 PN，參考 NA
+  assert.equal(by["3.4"].match, "unanswered");
+  assert.equal(by["D2"].match, "different");
+  assert.equal(by["D4"].match, "same");
+  assert.equal(by["overall"].match, "unanswered");
+  const t = review.totals;
+  assert.equal(t.same + t.equivalent + t.different + t.unanswered + t.skipped, review.rows.length);
 });

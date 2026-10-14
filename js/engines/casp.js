@@ -1,8 +1,9 @@
 // CASP 引擎：逐題作答、官方跳題規則、完成度。不產生整體判斷（SPEC N9）。
 
+import { UNANSWERED, NOT_APPLICABLE } from "./common.js";
+
+export { UNANSWERED, NOT_APPLICABLE };
 export const CASP_VALUES = ["Y", "N", "CT"];
-export const UNANSWERED = "unanswered";
-export const NOT_APPLICABLE = "not-applicable";
 
 function isSkipped(item, answers) {
   return Boolean(item.skipWhen) && answers[item.skipWhen.item] === item.skipWhen.answer;

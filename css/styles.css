@@ -433,6 +433,51 @@ mark.kw {
 .pager { position: sticky; bottom: 0; z-index: 3; background: var(--surface); display: flex; justify-content: space-between; gap: 8px; padding: 10px 20px; border-top: 1px solid var(--line); }
 .finish { flex: 1; }
 
+/* ---------- RoB 2 ---------- */
+
+.sq { display: grid; gap: 8px; padding: 12px 0; border-top: 1px solid var(--line); }
+.sq__text { font-size: 15px; line-height: 1.55; }
+.sq__id { display: inline-block; min-width: 2.6em; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--primary); }
+.sq--skipped .sq__text { color: var(--ink-3); }
+.sq__na { margin: 0; font-size: 13px; color: var(--ink-3); padding: 6px 10px; background: var(--sunken); border-radius: var(--radius-control); border: 1px dashed var(--line); }
+.sq__pending { margin: 0; font-size: 12.5px; color: var(--ink-3); }
+.sq-part { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; }
+.sq__options { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt {
+  min-width: 44px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-weight: 700;
+  cursor: pointer;
+}
+.opt[aria-pressed="true"] { border-color: var(--primary); background: var(--primary); color: var(--primary-ink); }
+
+.answers--judgement .answer { padding: 10px 6px; }
+.answer[data-judgement="Low"][aria-pressed="true"] { border-color: var(--yes); background: color-mix(in srgb, var(--yes) 12%, var(--surface)); color: var(--yes); }
+.answer[data-judgement="Some concerns"][aria-pressed="true"] { border-color: var(--ct); background: color-mix(in srgb, var(--ct) 14%, var(--surface)); color: var(--ct); }
+.answer[data-judgement="High"][aria-pressed="true"] { border-color: var(--no); background: color-mix(in srgb, var(--no) 12%, var(--surface)); color: var(--no); }
+.chip[data-judgement="Low"] { border-color: var(--yes); color: var(--yes); font-weight: 700; }
+.chip[data-judgement="Some concerns"] { border-color: var(--ct); color: var(--ct); font-weight: 700; }
+.chip[data-judgement="High"] { border-color: var(--no); color: var(--no); font-weight: 700; }
+.chip--step { min-width: 48px; }
+td[data-judgement="Low"] { color: var(--yes); font-weight: 700; }
+td[data-judgement="Some concerns"] { color: var(--ct); font-weight: 700; }
+td[data-judgement="High"] { color: var(--no); font-weight: 700; }
+
+.algo { display: grid; gap: 4px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: var(--radius-card); background: var(--sunken); font-size: 14px; }
+.algo--differs { border-color: var(--ct); background: color-mix(in srgb, var(--ct) 8%, var(--surface)); }
+.algo__head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; font-weight: 700; }
+.algo__flag { color: var(--ct); font-size: 13px; }
+.algo__ok { color: var(--yes); font-size: 13px; font-weight: 500; }
+.algo__path { margin: 0; font-family: var(--font-ui); font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.algo__locator { margin: 0; font-size: 12.5px; color: var(--ink-3); }
+
+.text-input { min-height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); width: 100%; }
+.report-judgement td { background: var(--sunken); }
+
 /* ---------- reference (red pen) ---------- */
 
 .redpen {
@@ -546,4 +591,5 @@ mark.kw {
   .print-root th { color: #000; border-bottom: 1.5px solid #000; }
   .print-root .print-caption { font-size: 11px; font-weight: 400; color: #444; border-bottom: 0; padding-bottom: 2px; }
   .print-root .muted, .print-root .note { color: #333; }
+  .print-root .report-judgement td { background: #f2f2f2; border-top: 1px solid #999; }
 }

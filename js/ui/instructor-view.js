@@ -77,7 +77,7 @@ function reviewView(fileName, parsed, review) {
     ? h(
         "div",
         { class: "tally", role: "status" },
-        ["same", "different", "unanswered", "skipped"].map((k) => h("span", {}, h("strong", {}, review.totals[k]), ` ${MATCH_TEXT[k]}`)),
+        ["same", "equivalent", "different", "unanswered", "skipped"].filter((k) => k !== "equivalent" || def.engine === "rob2").map((k) => h("span", {}, h("strong", {}, review.totals[k]), ` ${MATCH_TEXT[k]}`)),
         review.referenceStatus === "draft" ? h("span", { class: "draft-tag" }, "參考答案為草稿，待審定") : null
       )
     : h("p", { class: "banner banner--info" }, "這份作答對應學員自行上傳的 PDF，沒有參考答案可比對。");
@@ -86,9 +86,9 @@ function reviewView(fileName, parsed, review) {
   const rows = review.rows.map((row) =>
     h(
       "tr",
-      { dataset: { match: row.match ?? "" } },
+      { dataset: { match: row.match ?? "" }, class: row.kind === "judgement" ? "report-judgement" : null },
       h("td", { class: "num" }, row.number),
-      h("td", {}, row.question.zh),
+      h("td", {}, row.question.zh ?? row.question.en, row.question.zh && row.kind === "judgement" ? h("div", { class: "muted" }, row.question.en) : null),
       h("td", { class: "num student" }, answerText(row.student)),
       compare ? h("td", { class: "num" }, answerText(row.reference)) : null,
       compare ? h("td", { class: "num" }, MATCH_TEXT[row.match]) : null,
@@ -99,7 +99,7 @@ function reviewView(fileName, parsed, review) {
     )
   );
 
-  const summary = def.summaryFields.map((f) =>
+  const summary = (def.summaryFields ?? []).map((f) =>
     h(
       "tr",
       {},
@@ -119,16 +119,18 @@ function reviewView(fileName, parsed, review) {
       { class: "table-wrap" },
       h("table", { class: "review-table" }, h("thead", {}, h("tr", {}, header.map((x) => h("th", {}, x)))), h("tbody", {}, rows))
     ),
-    h("h2", { style: "font-size:16px;margin:8px 0 0" }, "評讀摘要"),
-    h(
-      "div",
-      { class: "table-wrap" },
-      h(
-        "table",
-        { class: "review-table" },
-        h("thead", {}, h("tr", {}, h("th", {}, "欄位"), h("th", {}, "學員"), compare ? h("th", {}, "參考") : null)),
-        h("tbody", {}, summary)
-      )
-    )
+    summary.length ? h("h2", { style: "font-size:16px;margin:8px 0 0" }, "評讀摘要") : null,
+    summary.length
+      ? h(
+          "div",
+          { class: "table-wrap" },
+          h(
+            "table",
+            { class: "review-table" },
+            h("thead", {}, h("tr", {}, h("th", {}, "欄位"), h("th", {}, "學員"), compare ? h("th", {}, "參考") : null)),
+            h("tbody", {}, summary)
+          )
+        )
+      : null
   );
 }
