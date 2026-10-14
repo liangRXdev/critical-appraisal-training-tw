@@ -2,6 +2,7 @@
 
 import * as casp from "./casp.js";
 import * as rob2 from "./rob2.js";
+import * as grade from "./grade.js";
 
 const MAX_TEXT = 4000;
 const isObj = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
@@ -99,7 +100,43 @@ const rob2Adapter = {
   },
 };
 
-const adapters = { casp: caspAdapter, rob2: rob2Adapter };
+// ---------- GRADE ----------
+
+const gradeAdapter = {
+  emptyAnswers: (def) => grade.normalizeAnswers(def, grade.emptyAnswers(def)),
+  emptyToolData: (def) => ({
+    outcome: Object.fromEntries(def.outcomeFields.map((f) => [f.id, ""])),
+    certainty: grade.UNANSWERED,
+    overrideReason: "",
+  }),
+  progress: (def, a) => grade.progress(def, a),
+  isComplete: (def, a) => grade.isComplete(def, a),
+  validate(data, def, errors) {
+    const ids = grade.itemIds(def);
+    for (const id of ids) if (!(id in data.answers)) errors.push({ path: `answers.${id}`, message: "缺少項目" });
+    for (const [id, value] of Object.entries(data.answers)) {
+      if (!ids.includes(id)) { errors.push({ path: `answers.${id}`, message: "未知項目" }); continue; }
+      const allowed = [...grade.allowedValues(def, id), grade.UNANSWERED, grade.NOT_APPLICABLE];
+      if (!allowed.includes(value)) errors.push({ path: `answers.${id}`, message: `值必須是 ${allowed.join("、")}` });
+    }
+    if (errors.length === 0) errors.push(...grade.invariantErrors(def, data.answers));
+    checkNotes(data, [...ids, "certainty"], errors);
+    if (Object.keys(data.considerChecks).length) errors.push({ path: "considerChecks", message: "GRADE 沒有考量清單，必須是空物件" });
+    const td = data.toolData;
+    checkKeys(td, ["outcome", "certainty", "overrideReason"], "toolData.", errors);
+    const fields = def.outcomeFields.map((f) => f.id);
+    if (isObj(td.outcome)) {
+      checkKeys(td.outcome, fields, "toolData.outcome.", errors);
+      for (const k of fields) if (k in td.outcome) checkText(td.outcome[k], `toolData.outcome.${k}`, errors, { max: 500 });
+    } else if ("outcome" in td) errors.push({ path: "toolData.outcome", message: "必須是物件" });
+    if ("certainty" in td && ![...grade.CERTAINTIES, grade.UNANSWERED].includes(td.certainty)) {
+      errors.push({ path: "toolData.certainty", message: "值必須是 High、Moderate、Low、Very low 或 unanswered" });
+    }
+    if ("overrideReason" in td) checkText(td.overrideReason, "toolData.overrideReason", errors);
+  },
+};
+
+const adapters = { casp: caspAdapter, rob2: rob2Adapter, grade: gradeAdapter };
 
 export function getAdapter(definition) {
   const adapter = adapters[definition.engine];

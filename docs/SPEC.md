@@ -1,6 +1,6 @@
 # Critical Appraisal Training — v1 規格
 
-> 狀態：r2（2026-10-14），已經 Codex 規格覆審並修訂；修訂依據見文末「修訂紀錄」
+> 狀態：r2.3（2026-10-14），r2 已經 Codex 規格覆審並修訂；後續修訂依據見文末「修訂紀錄」
 > 參考實作：`CASP-2024-SR-MA-of-RCT-main/`（朋友專案，無 LICENSE，僅參考架構與互動，不複製程式碼）
 
 ## 1. 目標與非目標
@@ -117,7 +117,7 @@
   - publication bias 最多 ↓1，合法值 0／−1（D-G1；Handbook §5.2.5 p.23）
 - 升級三因素（large effect、dose-response、plausible confounding）：各因素合法值依 Handbook 逐項定義；**前提：所有降級因素皆為 0**，否則停用並顯示原因
   - `observational` 起始：符合前提即可使用
-  - `rct` 起始（D-G3）：預設鎖定；學員須勾選「我了解 RCT 升級極為罕見」並填寫非空理由才解鎖，同時顯示 Handbook p.24 原文提示（*theoretically possible … yet to find a compelling example*）
+  - `rct` 起始（D-G3，r2.3 修訂）：**不提供升級**，升級欄位一律由引擎設為 `not-applicable`；畫面顯示 Handbook p.24 原文（*theoretically possible … yet to find a compelling example*）與教學說明。理由：RCT 起始即 High，而升級前提是降級皆 0，此時已是最高等級，升級不可能改變結果
 - 結果夾在 Very low 與 High 之間
 - 非法值（超出合法幅度、RCT 設定升級）→ 拒絕寫入並提示，不靜默修正
 
@@ -147,7 +147,7 @@
 - A2 A1 oracle 須含 ≥5 筆反直覺案例，涵蓋 ≥3 個 domain，類別至少包含：(i) 偏離發生但 ITT 分析適當、(ii) 有缺失資料但有證據顯示結果不受影響、(iii) 結果評估者知情但結果客觀、(iv) NI 導致的判斷、(v) Y 與 PY 不等價的分支（若官方存在）；每例註明觸發分支與 locator
 - A3 對決策表**每一列**逐一 mutation（改變其結果），每次至少一項測試必須 fail；以迴圈自動執行
 - A4 RoB 2 overall 矩陣：全 Low → Low；每個 domain 單獨 High → High；1 個 Some concerns → Some concerns 且無「可考慮判 High」提示；≥2 個 Some concerns、無 High → Some concerns 且有提示（不得輸出 High）；High 與 Some concerns 並存 → High
-- A5 GRADE：(i) 每因素逐一驗證合法幅度上下限與非法值被拒；(ii) RCT 起始：未解鎖時任何升級值皆無效果；已勾選解鎖但理由 trim 後為空 → 拒絕寫入；解鎖且有理由、降級皆 0 時升級才生效；(iii) 降級加總超過可降範圍時結果為 Very low，不出錯；(iv) observational 且任一降級 ≠ 0 時升級欄位被拒；(v) 至少一組非邊界運算（如 RCT + 兩因素各 −1 → Low）
+- A5 GRADE：(i) 每因素逐一驗證合法幅度上下限與非法值被拒；(ii) RCT 起始：升級欄位為 `not-applicable`，任何升級值皆拒絕寫入，匯入檔含升級值 → 拒絕；(iii) 降級加總超過可降範圍時結果為 Very low，不出錯；(iv) observational 且任一降級 ≠ 0 時升級欄位被拒；(v) 至少一組非邊界運算（如 RCT + 兩因素各 −1 → Low）
 - A6 RoB 2：每個 domain 中，**每個必答位置**單獨留空時皆回傳「無法建議」；`not-applicable` 與 `unanswered` 被區分；補齊後產生建議；再清除任一必答後建議消失
 
 **B — 匯出 / 匯入**
@@ -179,11 +179,11 @@
   - D-L1（**已決 2026-10-14**）：RoB 2 guidance／cribsheet 為 CC BY-NC-ND 4.0、GRADE Handbook 翻譯需編輯許可 → **題目只收英文原文，不收中譯**；中文僅限本專案自寫的「教學補充」（以自己的話解釋概念與判讀要點，不得逐句對應原文）
   - D-G2（**已決 2026-10-14**）：不精確採 **GRADE 34（2022）**，合法值 0／−1／−2／−3
   - D-G1（**已決 2026-10-14**）：發表偏差依 Handbook §5.2.5 內文，**最多 ↓1**（合法值 0／−1）；介面附教學提示說明 Table 5.2 寫 ↓1–2 與內文不一致
-  - D-G3（**已決 2026-10-14**）：RCT 起始允許升級但預設鎖定，須勾選確認並填理由才解鎖，附 Handbook 原文提示；降級皆 0 的前提不變
+  - D-G3（**已決 2026-10-14，同日修訂**）：RCT 起始不提供升級欄位，改以 Handbook p.24 原文＋教學說明呈現。原案「預設鎖定、確認＋理由解鎖」在「降級皆 0」前提下必然停在 High，解鎖對結果永遠無效，經使用者決定移除
 - **公開發布阻擋**（任一未清不得公開 GitHub Pages）：
   - 朋友 repo 授權：取得同意或對方補 LICENSE；在此之前不複製其程式碼（2026-10-14 待處理）
   - ~~CASP 內容授權~~：已確認。兩份 2024 checklist PDF 第 12 頁明載 CC BY-NC-SA 4.0（2026-10-14）
-  - D5 方法學簽核：RoB 2 決策表（`js/engines/rob2-tables.js`）已由指導者對照 guidance 流程圖簽核（2026-10-14）；RoB 2 範例文獻與參考答案已審定、列印已驗收（2026-10-14）。待完成：(ii) 以真實 PDF 實跑 RoB 2 比對；GRADE 規則簽核；CASP 中譯與參考答案審定
+  - D5 方法學簽核：RoB 2 決策表（`js/engines/rob2-tables.js`）已由指導者對照 guidance 流程圖簽核（2026-10-14）；RoB 2 範例文獻與參考答案已審定、列印已驗收（2026-10-14）。GRADE 規則已實作（`js/engines/grade.js`，各因素合法值與 locator 見 `docs/schema.md`，頁碼已對照 Handbook PDF 逐頁核對）。GRADE 規則已由指導者簽核、範例文獻與參考答案已審定、瀏覽器畫面已確認（2026-10-14）。待完成：(ii) 以真實 PDF 實跑 RoB 2 比對；CASP 中譯與參考答案審定
 - 視覺：走 `frontend-design`，以參考實作版面為基礎微調
 
 ## 12. 後續版本
@@ -217,3 +217,7 @@ r2.1 → r2.2（2026-10-14，使用者決策）：
 - D-G2：不精確採 GRADE 34，合法值至 −3；§7.3 同步修改
 - D-G1：發表偏差最多 ↓1；§7.3 同步修改
 - D-G3：RCT 升級改為「預設鎖定、確認＋理由解鎖」；§7.3、A5(ii) 同步修改
+
+r2.2 → r2.3（2026-10-14，實作 GRADE 時）：
+- D-G3 修訂：RCT 不提供升級欄位（原「鎖定＋解鎖」在零降級前提下對結果無效）；§7.3、A5(ii)、§11 同步修改
+- 升級欄位在研究設計或任一降級因素未作答前不可作答（Handbook §5.3「先降後升」）；狀態與不變量見 `docs/schema.md` GRADE 節

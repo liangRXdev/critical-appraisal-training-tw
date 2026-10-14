@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "toolId": "grade",
+  "toolVersion": "grade@handbook-2013",
+  "contentHash": "__CURRENT__",
+  "paperRef": "mock:iv-iron-fatigue-sr",
+  "paperLabel": "IV vs oral iron for fatigue in CKD — SR/MA",
+  "metadata": { "reviewerName": "林○君", "appraisalDate": "2026-10-14" },
+  "answers": {
+    "design": "rct",
+    "riskOfBias": "-2",
+    "inconsistency": "0",
+    "indirectness": "unanswered",
+    "imprecision": "-1",
+    "publicationBias": "-1",
+    "largeEffect": "not-applicable",
+    "doseResponse": "not-applicable",
+    "confounding": "not-applicable"
+  },
+  "notes": { "riskOfBias": "74% 權重是開放標籤 ✍️", "certainty": "作者說 moderate？" },
+  "considerChecks": {},
+  "toolData": {
+    "outcome": { "population": "非透析 CKD 3–5 期缺鐵成人", "intervention": "IV iron", "comparator": "oral iron", "outcome": "FACIT-Fatigue 8–16 週", "studies": "1,020 (6 RCTs)", "effect": "MD 2.6 (0.4 to 4.8)" },
+    "certainty": "Low",
+    "overrideReason": ""
+  },
+  "exportedAt": "2026-10-14T03:00:00.000Z"
+}

@@ -9,12 +9,15 @@ import { references as caspObsRefs } from "./casp-sr-obs/reference.js";
 import { definition as rob2Def } from "./rob2/definition.js";
 import { mockPapers as rob2Mocks } from "./rob2/mock-paper.js";
 import { references as rob2Refs } from "./rob2/reference.js";
+import { definition as gradeDef } from "./grade/definition.js";
+import { mockPapers as gradeMocks } from "./grade/mock-paper.js";
+import { references as gradeRefs } from "./grade/reference.js";
 
 export const tools = [
   { toolId: "casp-sr-rct", status: "ready", definition: caspRctDef, mockPapers: caspRctMocks, references: caspRctRefs },
   { toolId: "casp-sr-obs", status: "ready", definition: caspObsDef, mockPapers: caspObsMocks, references: caspObsRefs },
   { toolId: "rob2", status: "ready", definition: rob2Def, mockPapers: rob2Mocks, references: rob2Refs },
-  { toolId: "grade", status: "planned", shortTitle: { en: "GRADE", zh: "GRADE（證據確定性）" } },
+  { toolId: "grade", status: "ready", definition: gradeDef, mockPapers: gradeMocks, references: gradeRefs },
 ];
 
 export function getTool(toolId) {

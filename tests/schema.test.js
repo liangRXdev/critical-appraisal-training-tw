@@ -6,7 +6,7 @@ import { buildReview } from "../js/core/compare.js";
 import { getTool, resolvePaper } from "../js/tools/registry.js";
 import { loadFixture, clone } from "./helpers.js";
 
-const FIXTURES = ["casp-sr-rct.canonical.json", "casp-sr-obs.canonical.json", "casp-sr-rct.user-pdf.json", "rob2.canonical.json"];
+const FIXTURES = ["casp-sr-rct.canonical.json", "casp-sr-obs.canonical.json", "casp-sr-rct.user-pdf.json", "rob2.canonical.json", "grade.canonical.json"];
 
 async function rejects(data, pathPattern) {
   const text = typeof data === "string" ? data : JSON.stringify(data);
@@ -99,7 +99,7 @@ test("B2: 指名反例 —— 非 JSON、未知工具、版本、雜湊、較新
   const r = await rejects("{ not json", null);
   assert.match(r.errors[0].message, /不是有效的 JSON/);
   await rejects("[]", /^$/);
-  await rejects({ ...clone(base), toolId: "grade" }, /^toolId$/); // 尚未上線
+  await rejects({ ...clone(base), toolId: "grade" }, /^toolVersion$/); // 換掉 toolId 冒充其他工具
   await rejects({ ...clone(base), toolId: "no-such-tool" }, /^toolId$/);
   await rejects({ ...clone(base), toolVersion: "casp-sr-rct@2018" }, /^toolVersion$/);
   await rejects({ ...clone(base), contentHash: "sha256:" + "0".repeat(64) }, /^contentHash$/);
@@ -197,4 +197,75 @@ test("rob2 比對：Y≡PY、N≡PN 標為意涵相同；NA 對 NA 為皆免答�
   assert.equal(by["overall"].match, "unanswered");
   const t = review.totals;
   assert.equal(t.same + t.equivalent + t.different + t.unanswered + t.skipped, review.rows.length);
+});
+
+// GRADE：B2 專屬反例與比對
+test("B2 grade：合法幅度、升級不變量、toolData 結構的反例皆被拒", async () => {
+  const base = await loadFixture("grade.canonical.json");
+  const cases = [
+    [(d) => (d.answers.design = "mixed"), /^answers\.design$/],
+    [(d) => (d.answers.riskOfBias = "-3"), /^answers\.riskOfBias$/],
+    [(d) => (d.answers.publicationBias = "-2"), /^answers\.publicationBias$/], // D-G1
+    [(d) => (d.answers.imprecision = "-4"), /^answers\.imprecision$/], // D-G2
+    [(d) => (d.answers.inconsistency = -1), /^answers\.inconsistency$/], // 數字不是合法值
+    [(d) => (d.answers.indirectness = "+1"), /^answers\.indirectness$/],
+    [(d) => (d.answers.largeEffect = "+1"), /^answers\.largeEffect$/], // RCT 不升級
+    [(d) => (d.answers.design = "not-applicable"), /^answers\.design$/],
+    [(d) => delete d.answers.confounding, /^answers\.confounding$/],
+    [(d) => (d.answers.extra = "0"), /^answers\.extra$/],
+    [(d) => (d.toolData.certainty = "Some concerns"), /^toolData\.certainty$/],
+    [(d) => (d.toolData.certainty = "high"), /^toolData\.certainty$/],
+    [(d) => (d.toolData.overrideReason = null), /^toolData\.overrideReason$/],
+    [(d) => delete d.toolData.outcome.effect, /^toolData\.outcome\.effect$/],
+    [(d) => (d.toolData.outcome.outcome = "x".repeat(501)), /^toolData\.outcome\.outcome$/],
+    [(d) => (d.toolData.rctUnlock = true), /^toolData\.rctUnlock$/],
+    [(d) => (d.considerChecks = { design: [0] }), /^considerChecks$/],
+    [(d) => (d.notes.D1 = "x"), /^notes\.D1$/],
+  ];
+  for (const [mutate, path] of cases) {
+    const d = clone(base);
+    mutate(d);
+    await rejects(d, path);
+  }
+});
+
+test("B2 grade：observational 有降級時升級欄位必須免答；零降級時升級欄位不得免答", async () => {
+  const base = await loadFixture("grade.canonical.json");
+  const obs = (answers) => ({ ...clone(base), answers: { ...base.answers, design: "observational", ...answers } });
+  await rejects(obs({ largeEffect: "+2" }), /^answers\.largeEffect$/);
+  const zero = { riskOfBias: "0", inconsistency: "0", indirectness: "0", imprecision: "0", publicationBias: "0" };
+  await rejects(obs({ ...zero }), /^answers\.(largeEffect|doseResponse|confounding)$/);
+  const ok = await parseAppraisal(JSON.stringify(obs({ ...zero, largeEffect: "+2", doseResponse: "0", confounding: "unanswered" })));
+  assert.equal(ok.ok, true, JSON.stringify(ok.errors));
+});
+
+test("grade 比對：逐因素與確定性列比對；RCT 升級列為皆免答", async () => {
+  const fixture = await loadFixture("grade.canonical.json");
+  const r = await parseAppraisal(JSON.stringify(fixture));
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  const review = buildReview(r.value, r.tool.definition, r.paper);
+  const by = Object.fromEntries(review.rows.map((x) => [x.itemId, x]));
+  assert.equal(by.design.match, "same");
+  assert.equal(by.riskOfBias.match, "different"); // -2 vs -1
+  assert.equal(by.inconsistency.match, "same");
+  assert.equal(by.indirectness.match, "unanswered");
+  assert.equal(by.imprecision.match, "same");
+  assert.equal(by.publicationBias.match, "different"); // -1 vs 0
+  for (const id of ["largeEffect", "doseResponse", "confounding"]) assert.equal(by[id].match, "skipped");
+  assert.equal(by.certainty.match, "same");
+  assert.equal(by.certainty.kind, "judgement");
+  const t = review.totals;
+  assert.equal(t.equivalent, 0); // GRADE 沒有 Y≡PY 這類等價
+  assert.equal(t.same + t.different + t.unanswered + t.skipped, review.rows.length);
+});
+
+test("B1 grade：新建評讀即可通過驗證；user-pdf 只回傳作答", async () => {
+  const tool = getTool("grade");
+  for (const ref of ["mock:iv-iron-fatigue-sr", "user-pdf:0b8f6c1e-2d3a-4f5b-8c7d-9e0f1a2b3c4d"]) {
+    const s = await createAppraisal(tool, ref, "label");
+    const r = await parseAppraisal(serializeAppraisal(s));
+    assert.equal(r.ok, true, JSON.stringify(r.errors));
+    const review = buildReview(r.value, tool.definition, resolvePaper(tool, ref));
+    assert.equal(review.mode, ref.startsWith("mock:") ? "compare" : "answers-only");
+  }
 });

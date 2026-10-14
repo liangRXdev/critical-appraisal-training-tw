@@ -3,9 +3,11 @@
 import { h, mount } from "../core/dom.js";
 import { answerText } from "./labels.js";
 import * as rob2 from "../engines/rob2.js";
+import * as grade from "../engines/grade.js";
 
 export function renderReport(root, def, appraisal, progress) {
   if (def.engine === "rob2") return renderRob2Report(root, def, appraisal, progress);
+  if (def.engine === "grade") return renderGradeReport(root, def, appraisal, progress);
   const rows = def.items.map((item) =>
     h(
       "tr",
@@ -149,5 +151,54 @@ function renderRob2Report(root, def, appraisal, progress) {
     h("h2", {}, "逐題作答與判斷"),
     reportTable(caption, ["題號", "Signalling question／Domain", "作答／判斷", "筆記"], rows),
     h("p", { class: "muted", style: "margin-top:32px" }, `${def.source.citation} ${def.source.url}　授權：${def.source.license}（題目為官方英文原文，未翻譯）。`)
+  );
+}
+
+function renderGradeReport(root, def, appraisal, progress) {
+  const td = appraisal.toolData;
+  const a = appraisal.answers;
+  const caption = `${def.shortTitle.zh}｜${appraisal.paperLabel}｜評讀者：${appraisal.metadata.reviewerName || "（未填）"}｜${appraisal.metadata.appraisalDate || "日期未填"}`;
+  const row = (num, label, sub, id) =>
+    h(
+      "tr",
+      {},
+      h("td", { class: "num" }, num),
+      h("td", {}, label, sub ? h("div", { class: "muted" }, sub) : null),
+      h("td", { class: "num" }, answerText(a[id])),
+      h("td", {}, h("div", { class: "note" }, appraisal.notes[id] ?? ""))
+    );
+  const rows = [
+    row("設計", "Study design", "決定起始等級", def.design.id),
+    ...def.downgrade.map((f) => row("降級", f.name.en, f.locator, f.id)),
+    ...def.upgrade.map((f) => row("升級", f.name.en, f.locator, f.id)),
+  ];
+  const s = grade.suggestCertainty(def, a);
+  rows.push(
+    h(
+      "tr",
+      { class: "report-judgement" },
+      h("td", { class: "num" }, "確定性"),
+      h("td", {}, h("strong", {}, "Certainty of the evidence"), h("div", { class: "muted" }, s.status === "ok" ? `演算法建議：${s.level}（${s.path}）` : "演算法建議：資料不足")),
+      h("td", { class: "num" }, h("strong", {}, answerText(td.certainty))),
+      h("td", {}, h("div", { class: "note" }, [appraisal.notes.certainty, td.overrideReason && `理由：${td.overrideReason}`].filter(Boolean).join("\n")))
+    )
+  );
+
+  mount(
+    root,
+    h("h1", {}, def.shortTitle.zh),
+    h("p", { class: "muted" }, def.title.en),
+    h(
+      "dl",
+      {},
+      h("dt", {}, "文獻"), h("dd", {}, appraisal.paperLabel),
+      h("dt", {}, "評讀者"), h("dd", {}, appraisal.metadata.reviewerName || "（未填）"),
+      h("dt", {}, "評讀日期"), h("dd", {}, appraisal.metadata.appraisalDate || "（未填）"),
+      h("dt", {}, "完成度"), h("dd", {}, `${progress.done} / ${progress.total} 項`),
+      def.outcomeFields.map((f) => [h("dt", {}, f.label.en), h("dd", {}, td.outcome[f.id] || "（未填）")])
+    ),
+    h("h2", {}, "逐項評定"),
+    reportTable(caption, ["項目", "Factor", "評定", "筆記"], rows),
+    h("p", { class: "muted", style: "margin-top:32px" }, `${def.source.citation} ${def.source.url}（因素名稱為官方英文原文，未翻譯）。`)
   );
 }

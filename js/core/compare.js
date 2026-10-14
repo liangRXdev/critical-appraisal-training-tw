@@ -50,7 +50,30 @@ function rob2Rows(state, definition) {
   return rows;
 }
 
+function gradeRows(state, definition) {
+  const factor = (f, group) => ({ kind: "item", itemId: f.id, number: group, question: { en: f.name.en }, student: state.answers[f.id], note: state.notes[f.id] ?? "" });
+  return [
+    { kind: "item", itemId: "design", number: "設計", question: { en: "Study design (starting level)" }, student: state.answers.design, note: state.notes.design ?? "" },
+    ...definition.downgrade.map((f) => factor(f, "降級")),
+    ...definition.upgrade.map((f) => factor(f, "升級")),
+    {
+      kind: "judgement",
+      itemId: "certainty",
+      number: "確定性",
+      question: { en: "Certainty of evidence", zh: "證據確定性" },
+      student: state.toolData.certainty,
+      note: [state.notes.certainty, state.toolData.overrideReason].filter(Boolean).join("\n"),
+    },
+  ];
+}
+
+const ROWS = { casp: caspRows, rob2: rob2Rows, grade: gradeRows };
+
 function referenceFor(definition, reference, row) {
+  if (definition.engine === "grade") {
+    const r = row.kind === "judgement" ? reference.judgement : reference.answers[row.itemId];
+    return { answer: r.judgement ?? r.answer, rationale: r.rationale ?? "", sources: r.sources ?? [] };
+  }
   if (definition.engine === "rob2") {
     const r = row.kind === "judgement" ? reference.judgements[row.itemId] : reference.answers[row.itemId];
     return { answer: r.judgement ?? r.answer, rationale: r.rationale ?? "", sources: r.sources ?? [] };
@@ -60,7 +83,7 @@ function referenceFor(definition, reference, row) {
 
 // paper 來自 resolvePaper()
 export function buildReview(state, definition, paper) {
-  const rows = definition.engine === "rob2" ? rob2Rows(state, definition) : caspRows(state, definition);
+  const rows = ROWS[definition.engine](state, definition);
 
   if (paper.kind !== "mock" || !paper.reference) {
     return { mode: "answers-only", rows };

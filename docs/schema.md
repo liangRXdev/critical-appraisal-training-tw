@@ -87,9 +87,42 @@
 - `notes`：key ⊆ signalling question id ∪ {`D1`…`D5`, `overall`}
 - `considerChecks`：RoB 2 無考量清單，必須是 `{}`
 
-### GRADE
+### GRADE（`grade`）
 
-尚未上線。
+```json
+{
+  "outcome": { "population": "", "intervention": "", "comparator": "", "outcome": "", "studies": "", "effect": "" },
+  "certainty": "unanswered",
+  "overrideReason": ""
+}
+```
+
+- `outcome.*`：string，≤ 500 字元，可空（單一 outcome 的 SoF 列資訊）
+- `certainty`：`"High"`／`"Moderate"`／`"Low"`／`"Very low"`／`"unanswered"`（學員判斷）
+- `overrideReason`：string，≤ 4000 字元，可空；學員判斷與演算法建議不同時填寫
+- `answers`：key 恰好等於下表 9 項；value 為該項合法值、`unanswered` 或 `not-applicable`（值一律為字串，`-1` 這類數字不合法）
+
+| key | 合法值 | 依據（GRADE Handbook 2013） |
+|---|---|---|
+| `design` | `rct`（起始 High）／`observational`（起始 Low） | §5.1、§5.1.1 pp.11–12 |
+| `riskOfBias` | `0`／`-1`／`-2` | Table 5.2 pp.11–12；§5.2.1 pp.12–14 |
+| `inconsistency` | `0`／`-1`／`-2` | Table 5.2；§5.2.2 pp.14–16 |
+| `indirectness` | `0`／`-1`／`-2` | Table 5.2；§5.2.3 pp.16–18 |
+| `imprecision` | `0`／`-1`／`-2`／`-3` | §5.2.4 pp.18–22；**GRADE 34（2022）** Box 4–5（D-G2） |
+| `publicationBias` | `0`／`-1` | **§5.2.5 p.23**「maximum of one level」（D-G1；Table 5.2 寫 1–2 級） |
+| `largeEffect` | `0`／`+1`／`+2` | Table 5.3；§5.3.1、Table 5.9 pp.24–25 |
+| `doseResponse` | `0`／`+1` | Table 5.3；§5.3.2 p.25 |
+| `confounding` | `0`／`+1` | Table 5.3；§5.3.3 pp.25–26 |
+
+- 跨欄位不變量（升級三項 `largeEffect`、`doseResponse`、`confounding`）：
+  - `design = rct` → 必須是 `not-applicable`（D-G3 修訂）
+  - `design = observational` 且任一降級項已答且 ≠ `0` → 必須是 `not-applicable`（Handbook §5.3 p.24）
+  - `design` 未答，或尚有降級項未答（且未落入上一條）→ 必須是 `unanswered`
+  - `design = observational` 且五個降級項皆為 `0` → 不得是 `not-applicable`
+  - `design` 與五個降級項不得是 `not-applicable`
+- 建議等級（不存檔，由引擎計算）：起始等級 + 各項幅度加總（升級只在可用時計入），結果夾在 Very low 與 High 之間
+- `notes`：key ⊆ 上表 9 項 ∪ {`certainty`}
+- `considerChecks`：GRADE 無考量清單，必須是 `{}`
 
 ## 6. 匯入結果
 

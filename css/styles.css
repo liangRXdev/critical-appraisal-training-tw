@@ -478,6 +478,37 @@ td[data-judgement="High"] { color: var(--no); font-weight: 700; }
 .text-input { min-height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface); width: 100%; }
 .report-judgement td { background: var(--sunken); }
 
+/* ---------- GRADE ---------- */
+
+.answers--judgement:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, 1fr); }
+.answers--certainty { grid-template-columns: repeat(4, 1fr); }
+.answer--design[aria-pressed="true"] { border-color: var(--primary); background: var(--primary); color: var(--primary-ink); }
+.answer[data-certainty="High"][aria-pressed="true"] { border-color: var(--yes); background: color-mix(in srgb, var(--yes) 12%, var(--surface)); color: var(--yes); }
+.answer[data-certainty="Moderate"][aria-pressed="true"] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, var(--surface)); color: var(--primary); }
+.answer[data-certainty="Low"][aria-pressed="true"] { border-color: var(--ct); background: color-mix(in srgb, var(--ct) 14%, var(--surface)); color: var(--ct); }
+.answer[data-certainty="Very low"][aria-pressed="true"] { border-color: var(--no); background: color-mix(in srgb, var(--no) 12%, var(--surface)); color: var(--no); }
+.chip[data-certainty="High"] { border-color: var(--yes); color: var(--yes); font-weight: 700; }
+.chip[data-certainty="Moderate"] { border-color: var(--primary); color: var(--primary); font-weight: 700; }
+.chip[data-certainty="Low"] { border-color: var(--ct); color: var(--ct); font-weight: 700; }
+.chip[data-certainty="Very low"] { border-color: var(--no); color: var(--no); font-weight: 700; }
+
+.factor { display: grid; gap: 8px; padding: 14px 0; border-top: 1px solid var(--line); }
+.factor__head { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+.factor__name { font-size: 15px; font-weight: 700; line-height: 1.5; }
+.factor__locator { font-size: 12px; color: var(--ink-3); }
+.factor--off .factor__name { color: var(--ink-3); }
+.factor__note { margin: 0; font-size: 13px; line-height: 1.6; color: var(--ink-2); padding: 8px 10px; border-left: 3px solid var(--ct); background: var(--sunken); border-radius: 0 var(--radius-control) var(--radius-control) 0; }
+.factor__gate { display: grid; gap: 6px; padding: 12px 14px; background: var(--sunken); border-radius: var(--radius-control); font-size: 14px; color: var(--ink-2); }
+.factor__gate p { margin: 0; }
+.quote { font-style: italic; color: var(--ink-2); }
+.levels { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0 0; font-size: 13.5px; }
+.levels dt { font-weight: 700; }
+.levels dd { margin: 0; color: var(--ink-2); }
+
+@media screen and (max-width: 520px) {
+  .answers--certainty { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ---------- reference (red pen) ---------- */
 
 .redpen {

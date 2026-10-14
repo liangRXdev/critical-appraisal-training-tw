@@ -9,7 +9,9 @@ import { openPdf, extractText, findCandidates, hasTextLayer } from "./core/pdf.j
 import * as casp from "./engines/casp.js";
 import * as rob2 from "./engines/rob2.js";
 import { getAdapter } from "./engines/index.js";
+import * as grade from "./engines/grade.js";
 import { renderRob2, ROB2_STEPS, rob2StepEvidence, rob2StepKeywords, rob2FirstOpenStep } from "./ui/rob2-view.js";
+import { renderGrade, GRADE_STEPS, gradeStepEvidence, gradeStepKeywords, gradeFirstOpenStep } from "./ui/grade-view.js";
 import { renderMockPaper, renderPdfDropzone, createPdfViewer, showPdfError } from "./ui/paper-view.js";
 import { renderAppraise } from "./ui/question-view.js";
 import { renderReport } from "./ui/report-view.js";
@@ -179,32 +181,42 @@ function renderSetup() {
 function renderProgress() {
   const def = app.tool.definition;
   const { done, total } = getAdapter(def).progress(def, app.appraisal);
-  mount($("progress"), "已完成 ", h("strong", {}, `${done} / ${total}`), isRob2() ? " 項" : " 題");
+  mount($("progress"), "已完成 ", h("strong", {}, `${done} / ${total}`), isCasp() ? " 題" : " 項");
 }
 
-// ---------- 步驟（CASP：逐題＋摘要；RoB 2：前置、D1–D5、整體） ----------
+// ---------- 步驟（CASP：逐題＋摘要；RoB 2：前置、D1–D5、整體；GRADE：outcome、降級、升級、確定性） ----------
 
-const isRob2 = () => app.tool.definition.engine === "rob2";
+const engine = () => app.tool.definition.engine;
+const isCasp = () => engine() === "casp";
+
+const STEPPED = {
+  rob2: { steps: ROB2_STEPS, evidence: rob2StepEvidence, keywords: rob2StepKeywords, firstOpen: rob2FirstOpenStep },
+  grade: { steps: GRADE_STEPS, evidence: gradeStepEvidence, keywords: gradeStepKeywords, firstOpen: gradeFirstOpenStep },
+};
 
 function stepCount() {
-  return isRob2() ? ROB2_STEPS.length : app.tool.definition.items.length + 1;
+  return isCasp() ? app.tool.definition.items.length + 1 : STEPPED[engine()].steps.length;
 }
 
 function firstOpenStep() {
   const def = app.tool.definition;
-  if (isRob2()) return rob2FirstOpenStep(def, app.appraisal);
+  if (!isCasp()) return STEPPED[engine()].firstOpen(def, app.appraisal);
   const i = def.items.findIndex((it) => app.appraisal.answers[it.id] === casp.UNANSWERED);
   return i === -1 ? def.items.length : i;
 }
 
 function stepEvidence() {
   const def = app.tool.definition;
-  return isRob2() ? rob2StepEvidence(def, ROB2_STEPS[app.index]) : def.items[app.index]?.id ?? null;
+  if (isCasp()) return def.items[app.index]?.id ?? null;
+  const s = STEPPED[engine()];
+  return s.evidence(def, s.steps[app.index]);
 }
 
 function stepKeywords() {
   const def = app.tool.definition;
-  return isRob2() ? rob2StepKeywords(def, ROB2_STEPS[app.index]) : def.items[app.index]?.keywords ?? [];
+  if (isCasp()) return def.items[app.index]?.keywords ?? [];
+  const s = STEPPED[engine()];
+  return s.keywords(def, s.steps[app.index]);
 }
 
 function renderPaper() {
@@ -279,13 +291,39 @@ function renderAppraisePane() {
     onNote: setNote,
     onReveal: reveal,
   };
-  if (isRob2()) {
-    const keepScroll = () => {
-      const pane = $("appraise-pane");
-      const top = pane.scrollTop;
-      renderAppraisePane();
-      pane.scrollTop = top;
-    };
+  const keepScroll = () => {
+    const pane = $("appraise-pane");
+    const top = pane.scrollTop;
+    renderAppraisePane();
+    pane.scrollTop = top;
+  };
+  if (engine() === "grade") {
+    renderGrade($("appraise-pane"), def, app.appraisal, {
+      ...common,
+      onAnswer: (id, value) => {
+        app.appraisal.answers = grade.setAnswer(def, app.appraisal.answers, id, value);
+        persist();
+        renderProgress();
+        keepScroll();
+      },
+      onCertainty: (value) => {
+        app.appraisal.toolData.certainty = value;
+        persist();
+        renderProgress();
+        keepScroll();
+      },
+      onOverride: (text) => {
+        app.appraisal.toolData.overrideReason = text;
+        persist();
+      },
+      onOutcome: (field, text) => {
+        app.appraisal.toolData.outcome[field] = text;
+        persist();
+      },
+    });
+    return;
+  }
+  if (engine() === "rob2") {
     renderRob2($("appraise-pane"), def, app.appraisal, {
       ...common,
       onAnswer: (qid, value) => {

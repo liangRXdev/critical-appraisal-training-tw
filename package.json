@@ -2,7 +2,7 @@
   "name": "critical-appraisal-training",
   "version": "0.1.0",
   "private": true,
-  "description": "EBM 評讀教學與指導工具：CASP SR/MA（RCT／觀察性研究），RoB 2 與 GRADE 開發中",
+  "description": "EBM 評讀教學與指導工具：CASP SR/MA（RCT／觀察性研究）、RoB 2、GRADE",
   "type": "module",
   "scripts": {
     "start": "npx http-server ./ -p 3000 -c-1",
