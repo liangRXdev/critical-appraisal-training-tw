@@ -66,7 +66,7 @@ export async function validateAppraisal(data) {
 
   const expected = await contentHash(tool.definition, paper.mockPaper, paper.reference);
   if (data.contentHash !== expected) {
-    return fail([{ path: "contentHash", message: "題目或參考答案內容與產生此檔時不同，無法比對" }]);
+    return fail([{ path: "contentHash", code: "hash-mismatch", message: "題目或參考答案內容與產生此檔時不同，無法比對" }]);
   }
   return { ok: true, value: data, tool, paper };
 }

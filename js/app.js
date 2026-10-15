@@ -15,7 +15,7 @@ import { renderGrade, GRADE_STEPS, gradeStepEvidence, gradeStepKeywords, gradeFi
 import { renderMockPaper, renderPdfDropzone, createPdfViewer, showPdfError } from "./ui/paper-view.js";
 import { renderAppraise } from "./ui/question-view.js";
 import { renderReport } from "./ui/report-view.js";
-import { renderInstructor } from "./ui/instructor-view.js";
+import { renderInstructor, prepareInstructorPrint } from "./ui/instructor-view.js";
 
 const $ = (id) => document.getElementById(id);
 const store = createStore();
@@ -436,6 +436,8 @@ async function uploadNewPdf(file) {
 // ---------- 列印 ----------
 
 function preparePrint() {
+  $("print-root").classList.remove("print-root--landscape");
+  if (!$("view-instructor").hidden && prepareInstructorPrint($("print-root"))) return;
   if (!app.tool || !app.appraisal) return;
   const def = app.tool.definition;
   renderReport($("print-root"), def, app.appraisal, getAdapter(def).progress(def, app.appraisal));

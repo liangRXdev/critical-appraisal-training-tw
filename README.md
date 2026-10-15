@@ -6,7 +6,7 @@
 
 **線上版**：<https://liangrxdev.github.io/critical-appraisal-training-tw/>（純前端：作答只存在你的瀏覽器，上傳的 PDF 不會離開你的電腦）
 
-EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF，完成後與參考答案比對；指導者匯入學員作答檔，逐題並排批改。
+EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF，完成後與參考答案比對；指導者匯入學員作答檔，逐題並排批改；討論課可一次匯入 2–4 組作答檔做「多組比較」，標出組間分歧、投影逐題討論。
 
 - 規格：[`docs/SPEC.md`](docs/SPEC.md)（r2，已經 Codex 規格覆審，見 `.ai-review/`）
 - 匯出格式：[`docs/schema.md`](docs/schema.md)
@@ -19,6 +19,7 @@ EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF
 | CASP SR/MA of observational studies（2024） | 同上 |
 | RoB 2（parallel、effect of assignment） | 可用；題目為官方英文原文（CC BY-NC-ND，未翻譯），中文為自寫教學補充；決策表、範例文獻與參考答案已由指導者審定（2026-10-14） |
 | GRADE（單一 outcome） | 可用；因素名稱為 Handbook 英文原文，中文為自寫教學補充；規則依 SPEC D-G1～D-G3；規則、範例文獻與參考答案已由指導者審定（2026-10-14） |
+| 指導者多組比較 | 可用；四套工具皆支援，規格見 [`docs/feature-group-compare.md`](docs/feature-group-compare.md)；示範檔在 `examples/group-compare/<toolId>/`（指導者比對 → 多組比較 → 一次選取同資料夾 4 個檔） |
 
 ## 開發
 
@@ -26,6 +27,7 @@ EBM 評讀教學與指導工具。學員逐題評讀範例文獻或自己的 PDF
 npm start   # http://localhost:3000（ES modules 必須經 HTTP 載入，不能直接開 file://）
 npm test    # node:test，無需安裝套件
 npm run review:casp   # 產生 CASP 中譯與參考答案的審定對照表 → review/casp-review.html（不提交）
+node tools/make-group-demos.mjs   # 重產多組比較示範檔（題目或參考答案改版後必跑，否則雜湊不符、測試失敗）
 ```
 
 無建置工具，部署即上傳整個資料夾（GitHub Pages）。外部依賴只有 PDF.js 3.11.174（cdnjs，上傳 PDF 時才載入）與 Google Fonts。
@@ -38,7 +40,7 @@ js/engines/casp.js   逐題作答、官方跳題規則（Q9=No → Q10 免答）
 js/engines/rob2.js   條件題路由、SQ → domain 建議判斷、overall 建議；決策表在 rob2-tables.js
 js/engines/grade.js  起始等級、五降三升的合法幅度、升級前提（僅 observational 且零降級）、建議等級
 js/engines/index.js  依工具分派：初始狀態、完成度、匯入驗證
-js/core/             schema 驗證、匯出入、localStorage、比對、PDF
+js/core/             schema 驗證、匯出入、localStorage、比對、多組分歧判定（group-compare.js）、PDF
 js/ui/               畫面
 tests/               C1–C4 內容完整性、B1–B3 匯出入、引擎、儲存；RoB 2 以 tests/rob2-oracle.js（依流程圖獨立撰寫）窮舉比對＋逐列 mutation；GRADE 以測試內寫死的規則窮舉比對
 ```

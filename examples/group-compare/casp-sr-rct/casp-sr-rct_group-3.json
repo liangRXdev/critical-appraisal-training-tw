@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-rct",
+  "toolVersion": "casp-sr-rct@2024",
+  "contentHash": "sha256:1e0521f790f26f13e8f4fed0d8b51d9cf04e51fc4afdc127124360574253bfd0",
+  "paperRef": "mock:melatonin-icu-delirium",
+  "paperLabel": "Prophylactic melatonin for the prevention of delirium in critically ill adults: a systematic review and meta-analysis of randomised controlled trials",
+  "metadata": {
+    "reviewerName": "第三組",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "q1": "Y",
+    "q2": "Y",
+    "q3a": "N",
+    "q3b": "Y",
+    "q3c": "Y",
+    "q3d": "Y",
+    "q4": "Y",
+    "q5a": "Y",
+    "q5b": "Y",
+    "q6": "N",
+    "q6_1": "N",
+    "q6_2": "CT",
+    "q7": "N",
+    "q7_1": "N",
+    "q7_2": "CT",
+    "q8": "CT",
+    "q9": "N",
+    "q10": "not-applicable",
+    "conclusion": "N"
+  },
+  "notes": {
+    "q3a": "單一資料庫＋限英文，可能漏掉負面試驗。",
+    "q9": "沒有台灣試驗，劑型也不一定有，不適用。",
+    "conclusion": "不支持常規使用。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "summary": {
+      "positive": "",
+      "negative": "",
+      "unknowns": ""
+    }
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}

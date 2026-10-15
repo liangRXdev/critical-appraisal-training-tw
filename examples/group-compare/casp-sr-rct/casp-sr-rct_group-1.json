@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-rct",
+  "toolVersion": "casp-sr-rct@2024",
+  "contentHash": "sha256:1e0521f790f26f13e8f4fed0d8b51d9cf04e51fc4afdc127124360574253bfd0",
+  "paperRef": "mock:melatonin-icu-delirium",
+  "paperLabel": "Prophylactic melatonin for the prevention of delirium in critically ill adults: a systematic review and meta-analysis of randomised controlled trials",
+  "metadata": {
+    "reviewerName": "第一組",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "q1": "Y",
+    "q2": "Y",
+    "q3a": "N",
+    "q3b": "Y",
+    "q3c": "Y",
+    "q3d": "Y",
+    "q4": "Y",
+    "q5a": "Y",
+    "q5b": "Y",
+    "q6": "N",
+    "q6_1": "N",
+    "q6_2": "CT",
+    "q7": "N",
+    "q7_1": "N",
+    "q7_2": "CT",
+    "q8": "CT",
+    "q9": "CT",
+    "q10": "CT",
+    "conclusion": "CT"
+  },
+  "notes": {
+    "q3a": "只搜 MEDLINE 而且限英文，判 No。",
+    "q6": "異質性高卻用固定效應，信賴區間會太窄。",
+    "conclusion": "方法學問題太多，目前還不能改常規。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "summary": {
+      "positive": "雙人篩選與擷取、用 RoB 2。",
+      "negative": "搜尋只有一個資料庫；模型選擇不當。",
+      "unknowns": "院內劑型能否對應。"
+    }
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}

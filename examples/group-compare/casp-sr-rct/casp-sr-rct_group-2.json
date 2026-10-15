@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-rct",
+  "toolVersion": "casp-sr-rct@2024",
+  "contentHash": "sha256:1e0521f790f26f13e8f4fed0d8b51d9cf04e51fc4afdc127124360574253bfd0",
+  "paperRef": "mock:melatonin-icu-delirium",
+  "paperLabel": "Prophylactic melatonin for the prevention of delirium in critically ill adults: a systematic review and meta-analysis of randomised controlled trials",
+  "metadata": {
+    "reviewerName": "第二組",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "q1": "Y",
+    "q2": "Y",
+    "q3a": "Y",
+    "q3b": "Y",
+    "q3c": "Y",
+    "q3d": "Y",
+    "q4": "Y",
+    "q5a": "Y",
+    "q5b": "Y",
+    "q6": "CT",
+    "q6_1": "N",
+    "q6_2": "CT",
+    "q7": "N",
+    "q7_1": "N",
+    "q7_2": "CT",
+    "q8": "CT",
+    "q9": "Y",
+    "q10": "Y",
+    "conclusion": "Y"
+  },
+  "notes": {
+    "q3a": "有用 MeSH 也手動查參考文獻，我們覺得算完整。",
+    "q6": "有做敏感度分析，但看不太懂固定效應的影響。",
+    "q9": "族群是混合 ICU，跟我們醫院很像。",
+    "q10": "褪黑激素便宜，應該值得。",
+    "conclusion": "主要結果有統計顯著，可以考慮常規使用。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "summary": {
+      "positive": "主要結果顯著、副作用少。",
+      "negative": "",
+      "unknowns": ""
+    }
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}

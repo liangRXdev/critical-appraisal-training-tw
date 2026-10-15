@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "toolId": "grade",
+  "toolVersion": "grade@handbook-2013",
+  "contentHash": "sha256:8e179fa406d90c027a44c9d15752929ab63c372c7750ff6f0039f72778bc51d8",
+  "paperRef": "mock:iv-iron-fatigue-sr",
+  "paperLabel": "Intravenous versus oral iron for fatigue in adults with non-dialysis chronic kidney disease and iron deficiency: a systematic review and meta-analysis of randomised trials",
+  "metadata": {
+    "reviewerName": "第三組",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "design": "rct",
+    "riskOfBias": "0",
+    "inconsistency": "0",
+    "indirectness": "0",
+    "imprecision": "-1",
+    "publicationBias": "0",
+    "largeEffect": "not-applicable",
+    "doseResponse": "not-applicable",
+    "confounding": "not-applicable"
+  },
+  "notes": {
+    "riskOfBias": "只看低風險試驗方向也一致，不降。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "outcome": {
+      "population": "",
+      "intervention": "",
+      "comparator": "",
+      "outcome": "",
+      "studies": "",
+      "effect": ""
+    },
+    "certainty": "Moderate",
+    "overrideReason": ""
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}

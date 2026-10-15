@@ -104,3 +104,7 @@ export function buildReview(state, definition, paper) {
   };
 }
 
+
+// 多組比較共用：同一份 definition 產生的列結構一致
+export const appraisalRows = (state, definition) => ROWS[definition.engine](state, definition);
+export { referenceFor };

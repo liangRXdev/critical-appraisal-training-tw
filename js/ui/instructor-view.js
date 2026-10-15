@@ -4,6 +4,9 @@ import { h, mount } from "../core/dom.js";
 import { parseAppraisal } from "../core/appraisal.js";
 import { buildReview } from "../core/compare.js";
 import { answerText, MATCH_TEXT, sourceText } from "./labels.js";
+import { renderGroupCompare, prepareGroupPrint } from "./group-view.js";
+
+let panelMode = "single"; // 目前顯示「單份比對」或「多組比較」（列印依此決定）
 
 export function renderInstructor(root) {
   const result = h("div", { "aria-live": "polite" });
@@ -34,13 +37,35 @@ export function renderInstructor(root) {
     mount(result, reviewView(file.name, parsed, review));
   }
 
-  mount(
-    root,
-    h("h1", {}, "指導者比對"),
+  const single = h(
+    "div",
+    { class: "instructor__panel", id: "panel-single", role: "tabpanel", "aria-labelledby": "tab-single" },
     h("p", { class: "instructor__lead" }, "匯入學員的作答檔。若作答的是範例文獻，會與參考答案逐題並排，紅底標出不同處；若是學員自己上傳的 PDF，只顯示作答內容。"),
     zone,
     result
   );
+  const groups = h("div", { class: "instructor__panel", id: "panel-groups", role: "tabpanel", "aria-labelledby": "tab-groups", hidden: true });
+  renderGroupCompare(groups);
+
+  const tabs = [
+    h("button", { class: "seg", role: "tab", id: "tab-single", "aria-controls": "panel-single", "aria-selected": "true", onclick: () => show("single") }, "單份比對"),
+    h("button", { class: "seg", role: "tab", id: "tab-groups", "aria-controls": "panel-groups", "aria-selected": "false", onclick: () => show("groups") }, "多組比較"),
+  ];
+  function show(mode) {
+    panelMode = mode;
+    single.hidden = mode !== "single";
+    groups.hidden = mode !== "groups";
+    tabs[0].setAttribute("aria-selected", String(mode === "single"));
+    tabs[1].setAttribute("aria-selected", String(mode === "groups"));
+    root.classList.toggle("instructor--wide", mode === "groups");
+  }
+
+  mount(root, h("div", { class: "instructor__head" }, h("h1", {}, "指導者比對"), h("div", { class: "segmented", role: "tablist", "aria-label": "比對方式" }, tabs)), single, groups);
+}
+
+// 多組比較顯示中才接手列印；其餘沿用學員報告（回傳 false）
+export function prepareInstructorPrint(printRoot) {
+  return panelMode === "groups" && prepareGroupPrint(printRoot);
 }
 
 function errorBox(fileName, errors) {

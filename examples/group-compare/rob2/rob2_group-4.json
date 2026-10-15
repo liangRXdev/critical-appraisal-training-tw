@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "toolId": "rob2",
+  "toolVersion": "rob2@2019-08",
+  "contentHash": "sha256:6662e8bf30aba0d87a87055b2a55f446e2fde03e4fb36eb82af9ba5659360979",
+  "paperRef": "mock:iron-fatigue-ckd",
+  "paperLabel": "Intravenous versus oral iron for fatigue in iron-deficient adults with chronic kidney disease: the IRON-FAT open-label randomised trial",
+  "metadata": {
+    "reviewerName": "第四組",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "1.1": "Y",
+    "1.2": "Y",
+    "1.3": "N",
+    "2.1": "Y",
+    "2.2": "Y",
+    "2.3": "PN",
+    "2.4": "not-applicable",
+    "2.5": "not-applicable",
+    "2.6": "Y",
+    "2.7": "not-applicable",
+    "3.1": "N",
+    "3.2": "N",
+    "3.3": "Y",
+    "3.4": "Y",
+    "4.1": "N",
+    "4.2": "N",
+    "4.3": "Y",
+    "4.4": "Y",
+    "4.5": "PY",
+    "5.1": "unanswered",
+    "5.2": "unanswered",
+    "5.3": "unanswered"
+  },
+  "notes": {
+    "D3": "口服組缺失快三成，偏差風險高。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "preliminary": {
+      "experimental": "",
+      "comparator": "",
+      "outcome": "",
+      "numericalResult": ""
+    },
+    "judgements": {
+      "D1": "Low",
+      "D2": "Low",
+      "D3": "High",
+      "D4": "High",
+      "D5": "unanswered",
+      "overall": "unanswered"
+    },
+    "overrideReasons": {
+      "D1": "",
+      "D2": "",
+      "D3": "",
+      "D4": "",
+      "D5": "",
+      "overall": ""
+    }
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}

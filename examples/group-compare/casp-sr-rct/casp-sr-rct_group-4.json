@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-rct",
+  "toolVersion": "casp-sr-rct@2024",
+  "contentHash": "sha256:1e0521f790f26f13e8f4fed0d8b51d9cf04e51fc4afdc127124360574253bfd0",
+  "paperRef": "mock:melatonin-icu-delirium",
+  "paperLabel": "Prophylactic melatonin for the prevention of delirium in critically ill adults: a systematic review and meta-analysis of randomised controlled trials",
+  "metadata": {
+    "reviewerName": "",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "q1": "Y",
+    "q2": "Y",
+    "q3a": "N",
+    "q3b": "Y",
+    "q3c": "Y",
+    "q3d": "Y",
+    "q4": "CT",
+    "q5a": "Y",
+    "q5b": "Y",
+    "q6": "N",
+    "q6_1": "unanswered",
+    "q6_2": "unanswered",
+    "q7": "unanswered",
+    "q7_1": "unanswered",
+    "q7_2": "unanswered",
+    "q8": "unanswered",
+    "q9": "unanswered",
+    "q10": "unanswered",
+    "conclusion": "unanswered"
+  },
+  "notes": {
+    "q4": "有用 RoB 2，但不確定是不是雙人評估。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "summary": {
+      "positive": "",
+      "negative": "",
+      "unknowns": ""
+    }
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}

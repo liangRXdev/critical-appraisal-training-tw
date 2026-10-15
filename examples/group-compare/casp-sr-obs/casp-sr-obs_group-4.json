@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-obs",
+  "toolVersion": "casp-sr-obs@2024",
+  "contentHash": "sha256:befdd4e11e3afe76c3be7694afd197b7294c5a141d79fe3230120a79939c7920",
+  "paperRef": "mock:ppi-cap-risk",
+  "paperLabel": "Proton pump inhibitor use and the risk of community-acquired pneumonia in adults: a systematic review and meta-analysis of observational studies",
+  "metadata": {
+    "reviewerName": "第四組",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "q1": "Y",
+    "q2": "Y",
+    "q3a": "Y",
+    "q3b": "CT",
+    "q3c": "Y",
+    "q3d": "Y",
+    "q4": "Y",
+    "q5a": "Y",
+    "q5b": "Y",
+    "q6": "N",
+    "q6_1": "Y",
+    "q6_2": "Y",
+    "q7": "unanswered",
+    "q7_1": "unanswered",
+    "q7_2": "unanswered",
+    "q8": "unanswered",
+    "q9": "unanswered",
+    "q10": "unanswered",
+    "conclusion": "unanswered"
+  },
+  "notes": {
+    "q3b": "方法只寫抽樣複核，看不出漏篩比例。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "summary": {
+      "positive": "",
+      "negative": "",
+      "unknowns": ""
+    }
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}

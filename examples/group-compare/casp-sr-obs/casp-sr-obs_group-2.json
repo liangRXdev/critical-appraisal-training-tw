@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "toolId": "casp-sr-obs",
+  "toolVersion": "casp-sr-obs@2024",
+  "contentHash": "sha256:befdd4e11e3afe76c3be7694afd197b7294c5a141d79fe3230120a79939c7920",
+  "paperRef": "mock:ppi-cap-risk",
+  "paperLabel": "Proton pump inhibitor use and the risk of community-acquired pneumonia in adults: a systematic review and meta-analysis of observational studies",
+  "metadata": {
+    "reviewerName": "第二組",
+    "appraisalDate": "2026-10-15"
+  },
+  "answers": {
+    "q1": "Y",
+    "q2": "Y",
+    "q3a": "N",
+    "q3b": "Y",
+    "q3c": "Y",
+    "q3d": "Y",
+    "q4": "Y",
+    "q5a": "Y",
+    "q5b": "Y",
+    "q6": "Y",
+    "q6_1": "Y",
+    "q6_2": "Y",
+    "q7": "N",
+    "q7_1": "Y",
+    "q7_2": "CT",
+    "q8": "CT",
+    "q9": "CT",
+    "q10": "CT",
+    "conclusion": "Y"
+  },
+  "notes": {
+    "q3a": "沒有搜灰色文獻和會議摘要。",
+    "q3b": "全文有雙人判讀，應該可以。",
+    "q6": "有預先指定的次族群和統合迴歸，分析算完整。",
+    "conclusion": "16 篇研究都指向風險增加，應避免 PPI。"
+  },
+  "considerChecks": {},
+  "toolData": {
+    "summary": {
+      "positive": "",
+      "negative": "",
+      "unknowns": ""
+    }
+  },
+  "exportedAt": "2026-10-15T09:00:00.000Z"
+}
