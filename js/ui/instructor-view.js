@@ -10,7 +10,7 @@ let panelMode = "single"; // 目前顯示「單份比對」或「多組比較」
 
 export function renderInstructor(root) {
   const result = h("div", { "aria-live": "polite" });
-  const input = h("input", { type: "file", accept: "application/json,.json", hidden: true, onchange: (e) => handleFile(e.target.files[0]) });
+  const input = h("input", { type: "file", accept: "application/json,.json", hidden: true, onchange: (e) => { handleFile(e.target.files[0]); e.target.value = ""; } });
   const zone = h(
     "div",
     {

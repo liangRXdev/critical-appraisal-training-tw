@@ -51,7 +51,7 @@ export function renderMockPaper(root, mockPaper, { lang, evidenceFor, showEviden
 }
 
 export function renderPdfDropzone(root, { message, actionLabel, onFile }) {
-  const input = h("input", { type: "file", accept: "application/pdf,.pdf", hidden: true, onchange: (e) => onFile(e.target.files[0]) });
+  const input = h("input", { type: "file", accept: "application/pdf,.pdf", hidden: true, onchange: (e) => { onFile(e.target.files[0]); e.target.value = ""; } });
   const zone = h(
     "div",
     {
